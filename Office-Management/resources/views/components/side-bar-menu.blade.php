@@ -3,7 +3,7 @@
     <br>
     <a href="">Employee Attendance</a>
     <br>
-    <a href="">Employee Details</a>
+    <a href="/emp_details">Employee Details</a>
     <br>
     <a href="/add_emp">Add New Employee</a>
     <br>

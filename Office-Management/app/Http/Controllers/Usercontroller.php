@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserValidationRequest;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class Usercontroller extends Controller
 {
@@ -23,6 +25,8 @@ class Usercontroller extends Controller
             $user->assignRole($Role);
 
             return response()->json(['success' => 'User Registered Successfully']);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()]);
         } catch (Exception $e) {
             Log::info("Error in User Register: " . $e);
             return response()->json(['error' => $e->getMessage()]);
@@ -30,6 +34,46 @@ class Usercontroller extends Controller
     }
 
     public function Login(Request $request)
+    {
+        try {
+            //code...
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+
+    public function GetEmpList()
+    {
+        try {
+            $EmpDetails = User::paginate(20);
+            return response()->json(['EmpDetails' => $EmpDetails]);
+        } catch (Exception $e) {
+            Log::info("Error in GetEmpDetails: " . $e);
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function FilterEmpList(Request $request)
+    {
+        try {
+            $Validation = $request->validate([
+                'from' => 'required|date',
+                'to' => 'required|date|after_or_equal:from',
+            ]);
+
+            $from = Carbon::parse($Validation['from'])->startOfDay();
+            $to = Carbon::parse($Validation['to'])->endOfDay();
+
+            $EmpDetails = User::whereBetween('joining', [$from, $to])->paginate(20);
+
+            return response()->json(['EmpDetails' => $EmpDetails]);
+        } catch (Exception $e) {
+            Log::info("Error in FilterEmpList: " . $e);
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function EditEmp(Request $request)
     {
         try {
             //code...
