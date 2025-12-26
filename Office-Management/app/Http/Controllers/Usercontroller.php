@@ -73,12 +73,31 @@ class Usercontroller extends Controller
         }
     }
 
-    public function EditEmp(Request $request)
+    public function UpdateEmp(Request $request)
     {
         try {
-            //code...
+            return response()->json(['success' => $request->all()]);
         } catch (\Throwable $th) {
-            //throw $th;
+            Log::info("Error in UpdateEmp: " . $th);
+            return response()->json(['error' => $th->getMessage()]);
+        }
+    }
+
+    public function SearchEmp(Request $request)
+    {
+        try {
+            $Validation = $request->validate(['search' => 'required|string']);
+
+            $EmpDetails = User::where('name', 'like', '%' . $Validation['search'] . '%')->get();
+
+            if ($EmpDetails->isEmpty()) {
+                return response()->json(['EmpDetails' => []]);
+            }
+
+            return response()->json(['EmpDetails' => $EmpDetails]);
+        } catch (Exception $e) {
+            Log::info("Error in SearchEmp : " . $e);
+            return response()->json(['error' => $e->getMessage()]);
         }
     }
 }

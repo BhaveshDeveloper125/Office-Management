@@ -14,11 +14,36 @@
     <div class="flex-1">
 
         <form id="filter">
+            <h2>Filter According to Joining Date</h2>
             @csrf
-            <input type="date" name="from" id="from"><br>
-            <input type="date" name="to" id="to"><br>
+            <input type="date" name="from" id="from">
+            <input type="date" name="to" id="to">
             <button type="submit">Filter</button>
         </form>
+
+        <form id="SearchForm">
+            @csrf
+            <input type="search" name="search" id="search" placeholder="Search Employee Name Name">
+            <input type="submit" value="Search">
+        </form>
+
+        <table class="hidden" id="SearchTable">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Post</th>
+                <th>Mobile</th>
+                <th>Address</th>
+                <th>Qualification</th>
+                <th>Experience</th>
+                <th>Joining</th>
+                <th>Working From</th>
+                <th>Working To</th>
+                <th>Working</th>
+                <th>Action</th>
+            </tr>
+            <tbody id="EmpSearch"></tbody>
+        </table>
 
         <table id="filter_table" class="hidden">
             <tr>
@@ -56,6 +81,59 @@
             <tbody id="emp_details"></tbody>
         </table>
     </div>
+
+    <!-- Search Employee -->
+    <script>
+        document.querySelector('#SearchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const response = await fetch('/search_employee', {
+                    method: 'POST',
+                    body: new FormData(e.target)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    toastr.error(result.error);
+                } else {
+
+                    if (!result.EmpDetails || result.EmpDetails.length === 0) {
+                        toastr.error("No Data Found");
+                    } else {
+
+                        document.querySelector('#SearchTable').classList.remove('hidden');
+
+                        let EmpSearch = document.querySelector('#EmpSearch');
+                        EmpSearch.innerHTML = '';
+
+                        const empData = result.EmpDetails.data || result.EmpDetails;
+                        empData.forEach(i => {
+                            let tr = document.createElement('tr');
+                            tr.innerHTML = `<td>${i.name}</td>
+                            <td>${i.email}</td>
+                            <td>${i.post}</td>
+                            <td>${i.mobile}</td>
+                            <td>${i.address}</td>
+                            <td>${i.qualification}</td>
+                            <td>${i.experience}</td>
+                            <td>${i.joining}</td>
+                            <td>${i.working_from}</td>
+                            <td>${i.working_to}</td>
+                            <td>${i.working ? 'Employee' : 'X Employee'}</td>
+                            <td><a target="_blank" href="/edit_employee/${i.id}">Edit</a></td>`;
+                            EmpSearch.appendChild(tr);
+                        });
+
+                        console.log("Search", result.EmpDetails);
+                    }
+
+                }
+            } catch (e) {
+                toastr.error(e);
+            }
+        });
+    </script>
 
     <!-- Filter Employee Lists -->
     <script>
