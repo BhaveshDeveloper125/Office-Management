@@ -36,6 +36,22 @@ class UserValidationRequest extends FormRequest
                 'working_to' => 'required|date_format:H:i',
                 'role' => 'required|exists:roles,name'
             ];
+        } elseif ($this->isMethod('put') && $this->is('update_emp_details')) {
+            return [
+                'id' => 'required|exists:users,id',
+                'name' => 'sometimes|string|max:255',
+                'email' => 'sometimes|string|email|max:255|unique:users,email,' . $this->id,
+                'post' => 'sometimes|string|max:255',
+                'mobile' => 'sometimes|numeric|digits:10',
+                'address' => 'sometimes|string|max:255',
+                'qualification' => 'sometimes|string|max:255',
+                'experience' => 'sometimes|numeric',
+                'joining' => 'sometimes|date',
+                'working' => 'sometimes|boolean',
+                'working_from' => 'sometimes|date_format:H:i:s',
+                'working_to' => 'sometimes|date_format:H:i:s',
+                'role' => 'sometimes|exists:roles,name'
+            ];
         }
         return [];
     }

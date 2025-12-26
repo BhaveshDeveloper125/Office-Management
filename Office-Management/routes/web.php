@@ -26,7 +26,7 @@ Route::get('/edit_employee/{user}', function (User $user) {
 
 Route::post('/registration', [Usercontroller::class, 'Register'])->name('register');
 Route::post('/filter_employee', [Usercontroller::class, 'FilterEmpList'])->name('FilterEmployee');
-Route::post('/update_emp_details', [Usercontroller::class, 'UpdateEmp'])->name('UpdateEmpDetails');
+Route::put('/update_emp_details', [Usercontroller::class, 'UpdateEmp'])->name('UpdateEmpDetails');
 Route::post('/search_employee', [Usercontroller::class, 'SearchEmp'])->name('SearchEmployee');
 
 Route::get('/roles', [RoleController::class, 'GetRoles'])->name('roles');

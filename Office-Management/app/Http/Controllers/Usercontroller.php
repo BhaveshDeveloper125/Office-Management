@@ -73,13 +73,18 @@ class Usercontroller extends Controller
         }
     }
 
-    public function UpdateEmp(Request $request)
+    public function UpdateEmp(UserValidationRequest $request)
     {
         try {
-            return response()->json(['success' => $request->all()]);
-        } catch (\Throwable $th) {
-            Log::info("Error in UpdateEmp: " . $th);
-            return response()->json(['error' => $th->getMessage()]);
+            $Validation = $request->validated();
+            $user = User::find($Validation['id']);
+            $user->update($Validation);
+            return redirect()->back()->with(['success' => 'User Updated Successfully']);
+        } catch (ValidationException $e) {
+            return redirect()->back()->with(['error' => $e->getMessage()]);
+        } catch (Exception $e) {
+            Log::info("Error in UpdateEmp: " . $e);
+            return redirect()->back()->with(['error' => $e->getMessage()]);
         }
     }
 
