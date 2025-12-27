@@ -77,6 +77,7 @@
                 <th>Working To</th>
                 <th>Working</th>
                 <th>Action</th>
+                <th>Change Password</th>
             </tr>
             <tbody id="emp_details"></tbody>
         </table>
@@ -203,7 +204,8 @@
                     <td>${i.working_from}</td>
                     <td>${i.working_to}</td>
                     <td>${i.working ? 'Employee' : 'X Employee'}</td>
-                    <td><a target="_blank" href="/edit_employee/${i.id}">Edit</a></td>`;
+                    <td><a target="_blank" href="/edit_employee/${i.id}">Edit</a></td>
+                    <td><a target="_blank" href="/edit_password/${i.id}">Change</a></td>`;
                     EmpDetails.appendChild(tr);
                 });
             }

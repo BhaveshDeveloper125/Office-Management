@@ -105,4 +105,23 @@ class Usercontroller extends Controller
             return response()->json(['error' => $e->getMessage()]);
         }
     }
+
+    public function ChangePassword(Request $request)
+    {
+        try {
+            $Validation = $request->validate([
+                'email' => 'required|string|email|max:255|exists:users,email',
+                'password' => 'required|string|min:8|confirmed',
+            ]);
+
+            $Update = User::where('email', $Validation['email'])->update(['password' => bcrypt($Validation['password'])]);
+
+            return redirect()->back()->with(['success' => 'Password is changed successfully.']);
+        } catch (ValidationException $e) {
+            return redirect()->back()->with(['error' => $e->getMessage()]);
+        } catch (Exception $e) {
+            Log::info("Error in ChangePassword: " . $e);
+            return redirect()->back()->with(['error' => $e->getMessage()]);
+        }
+    }
 }

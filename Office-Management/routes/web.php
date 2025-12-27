@@ -22,12 +22,17 @@ Route::get('/emp_list', [Usercontroller::class, 'GetEmpList'])->name('emp_list')
 Route::get('/edit_employee/{user}', function (User $user) {
     return view('Admin.EditEmployee', ['user' => $user]);
 });
+Route::get('/edit_password/{user}', function (User $user) {
+    return view('Admin.ChangePassword', ['user' => $user]);
+});
 
 
 Route::post('/registration', [Usercontroller::class, 'Register'])->name('register');
 Route::post('/filter_employee', [Usercontroller::class, 'FilterEmpList'])->name('FilterEmployee');
-Route::put('/update_emp_details', [Usercontroller::class, 'UpdateEmp'])->name('UpdateEmpDetails');
 Route::post('/search_employee', [Usercontroller::class, 'SearchEmp'])->name('SearchEmployee');
+
+Route::put('/update_emp_details', [Usercontroller::class, 'UpdateEmp'])->name('UpdateEmpDetails');
+Route::put('/change_password', [Usercontroller::class, 'ChangePassword'])->name('ChangePassword');
 
 Route::get('/roles', [RoleController::class, 'GetRoles'])->name('roles');
 // });
