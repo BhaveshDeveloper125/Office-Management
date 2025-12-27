@@ -124,4 +124,17 @@ class Usercontroller extends Controller
             return redirect()->back()->with(['error' => $e->getMessage()]);
         }
     }
+
+    public function DeleteEmployee(Request $request)
+    {
+        try {
+            $Validation = $request->validate(['id' => 'required|exists:users,id']);
+            $user = User::find($Validation['id']);
+            $user->delete();
+            return redirect('/admin')->with(['success' => 'User deleted successfully.']);
+        } catch (Exception $e) {
+            Log::info("Error in DeleteEmployee: " . $e);
+            return redirect()->back()->with(['error' => $e->getMessage()]);
+        }
+    }
 }

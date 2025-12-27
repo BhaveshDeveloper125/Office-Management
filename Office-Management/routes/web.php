@@ -18,6 +18,7 @@ Route::view('/admin', 'Admin.AdminHomePage');
 Route::view('/add_emp', 'Admin.AddEmployees');
 Route::view('/emp_details', 'Admin.EmployeeDetails');
 
+Route::get('/roles', [RoleController::class, 'GetRoles'])->name('roles');
 Route::get('/emp_list', [Usercontroller::class, 'GetEmpList'])->name('emp_list');
 Route::get('/edit_employee/{user}', function (User $user) {
     return view('Admin.EditEmployee', ['user' => $user]);
@@ -34,7 +35,8 @@ Route::post('/search_employee', [Usercontroller::class, 'SearchEmp'])->name('Sea
 Route::put('/update_emp_details', [Usercontroller::class, 'UpdateEmp'])->name('UpdateEmpDetails');
 Route::put('/change_password', [Usercontroller::class, 'ChangePassword'])->name('ChangePassword');
 
-Route::get('/roles', [RoleController::class, 'GetRoles'])->name('roles');
+Route::delete('/delete_employee', [Usercontroller::class, 'DeleteEmployee'])->name('DeleteEmployee');
+
 // });
 
 
