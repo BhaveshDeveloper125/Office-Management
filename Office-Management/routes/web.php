@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\Usercontroller;
 use App\Http\Controllers\WeeklyHolidayController;
@@ -22,6 +23,8 @@ Route::view('/manage_holiday', 'Admin.HolidayManagement');
 
 Route::get('/roles', [RoleController::class, 'GetRoles'])->name('roles');
 Route::get('/emp_list', [Usercontroller::class, 'GetEmpList'])->name('emp_list');
+Route::get('/weekend', [WeeklyHolidayController::class, 'GetWeekends']);
+
 Route::get('/edit_employee/{user}', function (User $user) {
     return view('Admin.EditEmployee', ['user' => $user]);
 });
@@ -34,11 +37,13 @@ Route::post('/registration', [Usercontroller::class, 'Register'])->name('registe
 Route::post('/filter_employee', [Usercontroller::class, 'FilterEmpList'])->name('FilterEmployee');
 Route::post('/search_employee', [Usercontroller::class, 'SearchEmp'])->name('SearchEmployee');
 Route::post('/add_weekend', [WeeklyHolidayController::class, 'AddWeekend']);
+Route::post('/set_holiday', [HolidayController::class, 'AddHoliday']);
 
 Route::put('/update_emp_details', [Usercontroller::class, 'UpdateEmp'])->name('UpdateEmpDetails');
 Route::put('/change_password', [Usercontroller::class, 'ChangePassword'])->name('ChangePassword');
 
 Route::delete('/delete_employee', [Usercontroller::class, 'DeleteEmployee'])->name('DeleteEmployee');
+Route::delete('/remove_weekend', [WeeklyHolidayController::class, 'RemoveWeekends']);
 
 // });
 
