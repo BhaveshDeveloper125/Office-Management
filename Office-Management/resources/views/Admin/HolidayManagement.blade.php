@@ -36,14 +36,31 @@
 
         <br><br>
 
-        <form action="/set_holiday" method="post">
+        <form id="HolidayForm">
             <h1>Set Holiday</h1>
             @csrf
-            <input type="date" name="date" id="date" required><br>
+            From : <input type="date" name="from" id="from" required>
+            To : <input type="date" name="to" id="to" required><br>
             <input type="text" name="title" id="title" required placeholder="Holiday Title"><br>
             <textarea name="description" id="description" placeholder="Enter Description"></textarea>
             <input type="submit" value="Set">
         </form>
+
+        <br>
+
+        <table>
+            <tr>
+                <th>Sr No</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Days</th>
+                <th>Title</th>
+                <th>Description</th>
+            </tr>
+            <tbody id="HolidayTable"></tbody>
+        </table>
+
+        {{-- ********************************************************** WEEKEND APIS ********************************************************** --}}
 
         {{-- Set Weekend --}}
         <script>
@@ -134,6 +151,81 @@
             }
         </script>
         {{-- /Fetch Weekly Holidays --}}
+
+        {{-- ********************************************************** / WEEKEND APIS ********************************************************** --}}
+
+
+
+        {{-- ********************************************************** NORMAL HOLIDAY APIS ********************************************************** --}}
+
+        <script>
+            document.querySelector('#HolidayForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                try {
+                    const response = await fetch('/set_holiday', {
+                        method: "POST",
+                        body: new FormData(e.target)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        GetHoliday();
+                        toastr.success(result.success);
+                    } else {
+                        toastr.error(result.error);
+                    }
+
+                } catch (e) {
+                    toastr.error(e);
+                }
+            });
+        </script>
+
+        {{-- Fetch Normal Holiday --}}
+        <script>
+            document.addEventListener('DOMContentLoaded', GetHoliday);
+
+            async function GetHoliday() {
+                try {
+                    const response = await fetch('/holidays');
+                    const result = await response.json();
+
+                    if (response.ok) {
+
+                        let HolidayTable = document.querySelector('#HolidayTable');
+                        HolidayTable.innerHTML = '';
+
+                        console.log(result.Holiday);
+
+
+                        result.Holiday.data.forEach((i, index) => {
+
+                            let tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td>${index+1}</td>
+                                <td>${i.from}</td>
+                                <td>${i.to}</td>
+                                <td>${i.days}</td>
+                                <td>${i.title}</td>
+                                <td>${i.description}</td>`;
+
+                            HolidayTable.appendChild(tr);
+                        });
+
+                    } else {
+                        toastr.error(result.error);
+                    }
+
+                } catch (e) {
+                    toastr.error(e)
+                }
+            }
+        </script>
+        {{-- /Fetch Normal Holiday --}}
+
+        {{-- ********************************************************** / NORMAL HOLIDAY APIS ********************************************************** --}}
+
     </div>
 </body>
 

@@ -24,6 +24,7 @@ Route::view('/manage_holiday', 'Admin.HolidayManagement');
 Route::get('/roles', [RoleController::class, 'GetRoles'])->name('roles');
 Route::get('/emp_list', [Usercontroller::class, 'GetEmpList'])->name('emp_list');
 Route::get('/weekend', [WeeklyHolidayController::class, 'GetWeekends']);
+Route::get('/holidays', [HolidayController::class, 'GetHoliday']);
 
 Route::get('/edit_employee/{user}', function (User $user) {
     return view('Admin.EditEmployee', ['user' => $user]);

@@ -11,16 +11,22 @@ class Holiday extends Model
     protected $table = 'holidays';
 
     protected $fillable = [
-        'date',
+        'from',
+        'to',
         'title',
         'description',
+        'days',
     ];
 
     protected static function booted()
     {
+        static::saving(function ($model) {
+            $model->days = Carbon::parse($model->from)->diffInDays(Carbon::parse($model->to)) + 1;
+        });
+
         static::creating(function ($model) {
-            if ($model->date < Carbon::today()) {
-                throw new Exception("Maximum 6 days weekly holiday allowed", 422);
+            if (Carbon::parse($model->from) < Carbon::today() || $model->to < $model->from) {
+                throw new Exception("Can not set the past date for the Holiday", 422);
             }
         });
     }

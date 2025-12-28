@@ -15,20 +15,44 @@ class HolidayController extends Controller
     {
         try {
             $Validation = $request->validate([
-                'date' => 'required|date|after_or_equal:today',
+                'from' => 'required|date|before_or_equal:to',
+                'to'   => 'required|date|after_or_equal:from',
                 'title' => 'required|string|max:255',
                 'description' => 'nullable|max:255',
             ]);
 
+            $From = $Validation['from'];
+            $To = $Validation['to'];
+
+            $HolidayExists = Holiday::where(function ($i) use ($From, $To) {
+                $i->where('to', '>=', $From)
+                    ->where('from', '<=', $To);
+            })->exists();
+
+            if ($HolidayExists) {
+                return throw new Exception('Holiday already exists , please select the another time period.');
+            }
+
             Holiday::create($Validation);
 
-            return response()->json(['success' => $Validation['title'] . " holiday is set " . " on " . Carbon::parse($Validation['date'])->format('jS M Y')]);
+            return response()->json(['success' => 'Holiday is Set Success fully']);
         } catch (ValidationException $v) {
             Log::info("Validation error in AddHoliday from HolidayController : " . $v);
-            return response()->json(['error' => $v], 500);
+            return response()->json(['error' => $v->getMessage()], 500);
         } catch (Exception $e) {
             Log::info("Error in AddHoliday from HolidayController : " . $e);
-            return response()->json(['error' => $e], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function GetHoliday()
+    {
+        try {
+            $Holiday = Holiday::paginate(20);
+            return response()->json(['Holiday' => $Holiday]);
+        } catch (Exception $e) {
+            Log::info("Error in GetHoliday from HolidayController : " . $e);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }
