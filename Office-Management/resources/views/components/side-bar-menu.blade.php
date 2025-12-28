@@ -7,9 +7,9 @@
     <br>
     <a href="/add_emp">Add New Employee</a>
     <br>
-    <a href="">Search Employee</a>
+    <a href="/search_emp">Search Employee</a>
     <br>
-    <a href="">Holiday management</a>
+    <a href="/manage_holiday">Holiday management</a>
     <br>
     <a href="">Employee Leave Request</a>
     <br>

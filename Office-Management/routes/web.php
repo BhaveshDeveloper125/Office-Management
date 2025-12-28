@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\Usercontroller;
+use App\Http\Controllers\WeeklyHolidayController;
 use App\Http\Middleware\AuthcheckMiddleware;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,7 @@ Route::post('/login', [Usercontroller::class, 'Login'])->name('login');
 Route::view('/admin', 'Admin.AdminHomePage');
 Route::view('/add_emp', 'Admin.AddEmployees');
 Route::view('/emp_details', 'Admin.EmployeeDetails');
+Route::view('/manage_holiday', 'Admin.HolidayManagement');
 
 Route::get('/roles', [RoleController::class, 'GetRoles'])->name('roles');
 Route::get('/emp_list', [Usercontroller::class, 'GetEmpList'])->name('emp_list');
@@ -31,6 +33,7 @@ Route::get('/edit_password/{user}', function (User $user) {
 Route::post('/registration', [Usercontroller::class, 'Register'])->name('register');
 Route::post('/filter_employee', [Usercontroller::class, 'FilterEmpList'])->name('FilterEmployee');
 Route::post('/search_employee', [Usercontroller::class, 'SearchEmp'])->name('SearchEmployee');
+Route::post('/add_weekend', [WeeklyHolidayController::class, 'AddWeekend']);
 
 Route::put('/update_emp_details', [Usercontroller::class, 'UpdateEmp'])->name('UpdateEmpDetails');
 Route::put('/change_password', [Usercontroller::class, 'ChangePassword'])->name('ChangePassword');
