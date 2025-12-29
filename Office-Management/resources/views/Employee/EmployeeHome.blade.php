@@ -19,18 +19,67 @@
             </a>
         </div>
 
-        <form action="{{ route('CheckIn') }}" method="post">
+        <form id="CheckIn">
             @csrf
             <input type="submit" value="Check In">
         </form>
 
-        <form action="{{ route('CheckOut') }}" method="post">
+        <form id="CheckOut">
             @csrf
             <input type="submit" value="Check Out">
         </form>
-
     </div>
 
+    {{-- Check In --}}
+    <script>
+        document.querySelector('#CheckIn').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const response = await fetch('/checkin', {
+                    method: "POST",
+                    body: new FormData(e.target)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    toastr.success(result.success);
+                    console.log(result);
+                } else {
+                    toastr.error(result.error);
+                }
+
+            } catch (e) {
+                toastr.error(e);
+            }
+        });
+    </script>
+    {{-- /Check In --}}
+
+    {{-- Check Out --}}
+    <script>
+        document.querySelector('#CheckOut').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const response = await fetch('/checkout', {
+                    method: "POST",
+                    body: new FormData(e.target)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    toastr.success(result.success);
+                } else {
+                    toastr.error(result.error);
+                }
+
+            } catch (e) {
+                toastr.error(e);
+            }
+        });
+    </script>
+    {{-- /Check Out --}}
 
 </body>
 
