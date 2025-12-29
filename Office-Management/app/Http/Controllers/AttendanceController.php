@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 
 class AttendanceController extends Controller
@@ -14,11 +15,7 @@ class AttendanceController extends Controller
     public function CheckIn()
     {
         try {
-            if (Attendance::whereBetween('checkin', [Carbon::today()->startOfDay(), Carbon::today()->endOfDay()])->where('user_id', Auth::id())->exists()) {
-                throw new Exception('You have already checkin');
-            } elseif (Attendance::where('user_id', Auth::id())->whereNull('checkout')->exists()) {
-                throw new Exception('Please Checkout for the previous Dates');
-            }
+            Gate::authorize('CheckIn', Attendance::class);
 
             Attendance::create(['user_id' => Auth::id()]);
 
@@ -33,10 +30,7 @@ class AttendanceController extends Controller
     public function CheckOut()
     {
         try {
-            $affectedRows = Attendance::whereDate('checkin', Carbon::today())
-                ->where('user_id', Auth::id())
-                ->whereNull('checkout')
-                ->update(['checkout' => Carbon::now()]);
+            $affectedRows = Attendance::whereDate('checkin', Carbon::today())->where('user_id', Auth::id())->whereNull('checkout')->update(['checkout' => Carbon::now()]);
 
             if ($affectedRows) {
                 return response()->json(['success' => 'Checkout successfully.']);
