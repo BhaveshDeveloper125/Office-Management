@@ -30,6 +30,7 @@ class User extends Authenticatable
         'joining',
         'working_from',
         'working_to',
+        'hours',
         'working'
     ];
 

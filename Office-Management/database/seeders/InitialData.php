@@ -13,8 +13,8 @@ class InitialData extends Seeder
      */
     public function run(): void
     {
-        Role::create(['name' => 'Admin']);
-        Role::create(['name' => 'Manager']);
+        Role::create(['name' => 'Super Admin']);
+        Role::create(['name' => 'Sub Admin']);
         Role::create(['name' => 'Employee']);
     }
 }

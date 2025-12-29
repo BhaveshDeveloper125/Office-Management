@@ -36,11 +36,14 @@
             <textarea name="address" id="address" placeholder="Address" required></textarea> <br>
 
             <input type="password" name="password" id="password" placeholder="Password" required> <br>
-            <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Confirm Password" required> <br>
+            <input type="password" name="password_confirmation" id="password_confirmation"
+                placeholder="Confirm Password" required> <br>
 
             <select name="role" id="role_container">
                 <option disabled selected>Select Role</option>
             </select><br>
+
+            <input type="number" name="hours" id="hours" required placeholder="Expected Working Hours"> <br>
 
             <input type="submit" value="Add">
         </form>
@@ -54,8 +57,14 @@
                 let Form = document.querySelector('#AddEmployeeForm');
                 let Formdata = new FormData(Form);
 
+                // Get CSRF token from the form
+                const csrfToken = document.querySelector('input[name="_token"]').value;
+
                 const response = await fetch('/registration', {
                     method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
                     body: Formdata
                 });
 
@@ -63,9 +72,11 @@
 
                 if (!response.ok) {
                     toastr.error(result.error);
+                    return;
                 }
 
                 toastr.success(result.success);
+                Form.reset();
 
             } catch (e) {
                 toastr.error(e);

@@ -34,7 +34,8 @@ class UserValidationRequest extends FormRequest
                 'joining' => 'required|date',
                 'working_from' => 'required|date_format:H:i',
                 'working_to' => 'required|date_format:H:i',
-                'role' => 'required|exists:roles,name'
+                'role' => 'required|exists:roles,name',
+                'hours' => 'required|numeric|min:0|max:24',
             ];
         } elseif ($this->isMethod('put') && $this->is('update_emp_details')) {
             return [
@@ -50,7 +51,8 @@ class UserValidationRequest extends FormRequest
                 'working' => 'sometimes|boolean',
                 'working_from' => 'sometimes|date_format:H:i:s',
                 'working_to' => 'sometimes|date_format:H:i:s',
-                'role' => 'sometimes|exists:roles,name'
+                'role' => 'sometimes|exists:roles,name',
+                'hours' => 'required|numeric|min:0|max:24',
             ];
         }
         return [];
