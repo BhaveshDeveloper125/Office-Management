@@ -45,6 +45,7 @@ Route::put('/change_password', [Usercontroller::class, 'ChangePassword'])->name(
 
 Route::delete('/delete_employee', [Usercontroller::class, 'DeleteEmployee'])->name('DeleteEmployee');
 Route::delete('/remove_weekend', [WeeklyHolidayController::class, 'RemoveWeekends']);
+Route::delete('/remove_holiday', [HolidayController::class, 'RemoveHoliday']);
 
 // });
 

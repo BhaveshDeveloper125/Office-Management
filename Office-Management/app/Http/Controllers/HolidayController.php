@@ -55,4 +55,28 @@ class HolidayController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    public function RemoveHoliday(Request $request)
+    {
+        try {
+            $Validation = $request->validate([
+                'from' => 'required|date|before_or_equal:to',
+                'to'   => 'required|date|after_or_equal:from',
+                'title' => 'required|string|max:255',
+            ]);
+
+            $Holiday = Holiday::where('from', $Validation['from'])->where('to', $Validation['to'])->where('title', $Validation['title'])->first();
+
+            if (!$Holiday) {
+                throw new Exception('Entered Holiday Date does not exist');
+            }
+
+            $Holiday->delete();
+
+            return response()->json(['success' => 'Entered Holiday is cancelled successfully.']);
+        } catch (Exception $e) {
+            Log::info("Error in RemoveHoliday from HolidayController : " . $e);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 }

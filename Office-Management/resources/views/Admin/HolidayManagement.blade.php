@@ -42,8 +42,10 @@
             From : <input type="date" name="from" id="from" required>
             To : <input type="date" name="to" id="to" required><br>
             <input type="text" name="title" id="title" required placeholder="Holiday Title"><br>
-            <textarea name="description" id="description" placeholder="Enter Description"></textarea>
-            <input type="submit" value="Set">
+            <textarea name="description" id="description" placeholder="Enter Description"></textarea> <br />
+            <button type="submit" id="add_holiday">Set Holiday</button> <br>
+            <button type="submit" id="remove_holiday">Remove Holiday</button>
+            <p class="text-red-800">Enter same exact date to remove the Holiday</p>
         </form>
 
         <br>
@@ -158,29 +160,35 @@
 
         {{-- ********************************************************** NORMAL HOLIDAY APIS ********************************************************** --}}
 
+        {{-- Add Normal Holiday --}}
         <script>
-            document.querySelector('#HolidayForm').addEventListener('submit', async (e) => {
+            document.querySelector('#add_holiday').addEventListener('click', async (e) => {
                 e.preventDefault();
                 try {
+                    const form = document.querySelector('#HolidayForm');
+                    const Body = new FormData(form);
+
                     const response = await fetch('/set_holiday', {
                         method: "POST",
-                        body: new FormData(e.target)
+                        body: Body,
                     });
 
                     const result = await response.json();
 
                     if (response.ok) {
-                        GetHoliday();
                         toastr.success(result.success);
+                        GetHoliday();
                     } else {
                         toastr.error(result.error);
                     }
 
                 } catch (e) {
-                    toastr.error(e);
+                    toastr.error(" API Error ", e);
                 }
             });
         </script>
+        {{-- /Add Normal Holiday --}}
+
 
         {{-- Fetch Normal Holiday --}}
         <script>
@@ -223,6 +231,36 @@
             }
         </script>
         {{-- /Fetch Normal Holiday --}}
+
+
+        {{-- Remove Normal Holiday --}}
+        <script>
+            document.querySelector('#remove_holiday').addEventListener('click', async (e) => {
+                e.preventDefault();
+                try {
+                    const form = document.querySelector('#HolidayForm');
+                    const Body = new FormData(form);
+                    Body.append('_method', 'DELETE');
+
+                    const response = await fetch('/remove_holiday', {
+                        method: "POST",
+                        body: Body,
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        toastr.success(result.success);
+                        GetHoliday();
+                    } else {
+                        toastr.error(result.error);
+                    }
+                } catch (e) {
+                    toastr.error(e);
+                }
+            });
+        </script>
+        {{-- /Remove Normal Holiday --}}
 
         {{-- ********************************************************** / NORMAL HOLIDAY APIS ********************************************************** --}}
 
