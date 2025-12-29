@@ -7,6 +7,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
@@ -36,9 +37,31 @@ class Usercontroller extends Controller
     public function Login(Request $request)
     {
         try {
-            //code...
-        } catch (\Throwable $th) {
-            //throw $th;
+            $Validation = $request->validate([
+                'email' => 'required|email|exists:users,email',
+                'password' => 'required|',
+            ]);
+
+            if (Auth::attempt($Validation)) {
+                return redirect('/')->with(['success' => 'User is login successfully.']);
+            } else {
+                return redirect()->back()->with(['error' => 'Invalid Credentials']);
+            }
+        } catch (Exception $e) {
+            Log::info("Error in Login from Usercontroller: " . $e);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function Logout(Request $request)
+    {
+        try {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('Login Page')->with(['success' => 'User is logout successfully.']);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 

@@ -11,9 +11,11 @@
 
 <body class="flex">
     <form action="{{ route('login') }}" method="post">
+        @csrf
         <input type="email" name="email" id="email" placeholder="Email" required>
         <br>
-        <input type="password" name="password" id="password" placeholder="Password" readonly>
+        <input type="password" name="password" id="password" placeholder="Password" required>
+        <br>
         <input type="submit" value="Login">
 
         @if ($errors->any())
@@ -21,7 +23,6 @@
                 <p class="text-red-500">{{ $i }}</p>
             @endforeach
         @endif
-
     </form>
 </body>
 
