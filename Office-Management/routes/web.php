@@ -32,6 +32,8 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::get('/emp_list', [Usercontroller::class, 'GetEmpList'])->name('emp_list');
     Route::get('/weekend', [WeeklyHolidayController::class, 'GetWeekends']);
     Route::get('/holidays', [HolidayController::class, 'GetHoliday']);
+    Route::get('/emp/history', [AttendanceController::class, 'EmpHistory']);
+    Route::get('/current_month_attendace_summary', [AttendanceController::class, 'CurrentMonthAttendanceReport']);
 
     Route::get('/edit_employee/{user}', function (User $user) {
         return view('Admin.EditEmployee', ['user' => $user]);
@@ -62,6 +64,8 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::view('/add_emp', 'Admin.AddEmployees');
     Route::view('/emp_details', 'Admin.EmployeeDetails');
     Route::view('/manage_holiday', 'Admin.HolidayManagement');
+    Route::view('/attendance', 'Employee.Attendance');
+    Route::view('/emp_attendance', 'Employee.EmployeeAttendance');
 });
 
 

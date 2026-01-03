@@ -19,13 +19,63 @@
             </a>
         </div>
 
+        <div class="w-screen bg-green-500 flex gap-2 p-2 flex-wrap ">
+            <div class="size-40 bg-red-500 p-3">
+                <a href="" class="size-full bg-yellow-500 block">
+                    <h1>Attendance This Month</h1>
+                    <span id="attendance"></span>
+                </a>
+            </div>
+            <div class="size-40 bg-red-500 p-3">
+                <a href="" class="size-full bg-yellow-500 block">
+                    <h1>Late This Month</h1>
+                    <span id="late"></span>
+                </a>
+            </div>
+            <div class="size-40 bg-red-500 p-3">
+                <a href="" class="size-full bg-yellow-500 block">
+                    <h1>Early Leave This Month</h1>
+                    <span id="early"></span>
+                </a>
+            </div>
+            <div class="size-40 bg-red-500 p-3">
+                <a href="" class="size-full bg-yellow-500 block">
+                    <h1>Absent This Month</h1>
+                    <span id="absent"></span>
+                </a>
+            </div>
+            <div class="size-40 bg-red-500 p-3">
+                <a href="" class="size-full bg-yellow-500 block">
+                    <h1>OverTime This Month</h1>
+                    <span id="overtime"></span>
+                </a>
+            </div>
+            <div class="size-40 bg-red-500 p-3">
+                <a href="" class="size-full bg-yellow-500 block">
+                    <h1>Holiday This Month</h1>
+                </a>
+            </div>
+            <div class="size-40 bg-red-500 p-3">
+                <a href="" class="size-full bg-yellow-500 block">
+                    <h1>Working Days of This Month</h1>
+                </a>
+            </div>
+            <div class="size-40 bg-red-500 p-3">
+                <a href="" class="size-full bg-yellow-500 block">
+                    <h1>Remaining Days of This Month</h1>
+                </a>
+            </div>
+        </div>
+
         <form id="CheckIn">
             @csrf
+            <div id="LiveClock"></div>
             <input type="submit" value="Check In">
         </form>
 
         <form id="CheckOut">
             @csrf
+            <div id="LiveClock2"></div>
             <input type="submit" value="Check Out">
         </form>
     </div>
@@ -80,6 +130,67 @@
         });
     </script>
     {{-- /Check Out --}}
+
+    {{-- Timer --}}
+    <script>
+        setInterval(() => {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            document.querySelector('#LiveClock').textContent = timeString;
+            document.querySelector('#LiveClock2').textContent = timeString;
+        }, 1000);
+    </script>
+    {{-- /Timer --}}
+
+    {{-- Cards --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/current_month_attendace_summary');
+                const result = await response.json();
+
+                if (!response.ok) {
+                    toastr.error(result);
+                    console.log('API error : ', result);
+                } else {
+
+                    let attendance = document.querySelector('#attendance');
+                    attendance.innerHTML = '';
+                    attendance.textContent = result.attendance;
+
+                    let late = document.querySelector('#late');
+                    late.innerHTML = '';
+                    late.textContent = result.late;
+
+                    let early = document.querySelector('#early');
+                    early.innerHTML = '';
+                    early.textContent = result.early;
+
+                    let absent = document.querySelector('#absent');
+                    absent.innerHTML = '';
+                    absent.textContent = result.absent;
+
+                    let overtime = document.querySelector('#overtime');
+                    overtime.innerHTML = '';
+                    overtime.textContent = result.overtime;
+
+
+                    toastr.success(result);
+                    console.log(result);
+                }
+
+            } catch (e) {
+                toastr.error(e);
+            }
+        });
+    </script>
+    {{-- /Cards --}}
 
 </body>
 

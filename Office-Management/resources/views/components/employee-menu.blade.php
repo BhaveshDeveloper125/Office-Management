@@ -1,13 +1,11 @@
 <nav>
-    <a href="">Dashboard</a>
+    <a href="/">Dashboard</a>
     <br>
-    <a href="">Attendance</a>
+    <a href="/emp_attendance">Attendance</a>
     <br>
-    <a href="">Holidays</a>
+    <a href="/">Ask Leave</a>
     <br>
-    <a href="">Ask Leave</a>
-    <br>
-    <a href="">Forgot Checkout/Overtime</a>
+    <a href="/attendance">Forgot Checkout/Overtime</a>
     <br>
     <form action="{{ route('logout') }}" method="post"
         onsubmit="return confirm('Are you sure you want to logout from this system ??')">

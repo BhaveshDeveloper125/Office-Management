@@ -12,4 +12,14 @@ class Attendance extends Model
         'checkin',
         'checkout',
     ];
+
+    protected $casts = [
+        'checkin' => 'datetime',
+        'checkout' => 'datetime',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

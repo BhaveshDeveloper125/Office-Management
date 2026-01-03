@@ -31,7 +31,7 @@ class User extends Authenticatable
         'working_from',
         'working_to',
         'hours',
-        'working'
+        'working',
     ];
 
     /**
@@ -55,5 +55,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class, 'user_id');
     }
 }

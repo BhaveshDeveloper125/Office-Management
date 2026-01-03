@@ -22,7 +22,6 @@ class AttendanceController extends Controller
             return response()->json(['success' => 'Check in successfully.']);
         } catch (Exception $e) {
             Log::info("Error in CheckIn from AttendanceController : " . $e);
-            // return redirect()->back()->with(['error' => $e->getMessage()]);
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
@@ -30,17 +29,44 @@ class AttendanceController extends Controller
     public function CheckOut()
     {
         try {
-            $affectedRows = Attendance::whereDate('checkin', Carbon::today())->where('user_id', Auth::id())->whereNull('checkout')->update(['checkout' => Carbon::now()]);
+            $attendance = Attendance::where('user_id', Auth::id())->whereNull('checkout')->latest()->first();
 
-            if ($affectedRows) {
+            if ($attendance) {
+                $attendance->update(['checkout' => Carbon::now()]);
                 return response()->json(['success' => 'Checkout successfully.']);
-            } else {
-                throw new Exception('Please check in first or you have already checkout.');
-                // return response()->json('Please check in first or you have already checkout.');
             }
+
+            throw new Exception('Please check in first or you have already checkout.');
         } catch (Exception $e) {
             Log::info("Error in CheckOut from AttendanceController : " . $e);
             return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function EmpHistory()
+    {
+        try {
+            // $History = Attendance::whereMonth('checkin', Carbon::now()->month)->where('user_id', Auth::id())->with('user:id,working_from,working_to,hours')->get();
+            $History = Attendance::where('user_id', Auth::id())->with('user:id,working_from,working_to,hours')->get();
+            return response()->json(['History' => $History]);
+        } catch (Exception $e) {
+            Log::info("Error in EmpHistory from AttendanceController : " . $e);
+            return response()->json(['error' => $e], 500);
+        }
+    }
+
+    public function CurrentMonthAttendanceReport()
+    {
+        try {
+            $attendance = Attendance::whereMonth('checkin', Carbon::now()->month)->where('user_id', Auth::id())->count();
+            $absent = Carbon::now()->day - $attendance;
+            $late = Attendance::where('user_id', Auth::id())->whereMonth('checkin', Carbon::now()->month)->whereTime('checkin', '>', Auth::user()->working_from)->count();
+            $early = Attendance::where('user_id', Auth::id())->whereMonth('checkout', Carbon::now()->month)->whereTime('checkout', '<', Auth::user()->working_to)->count();
+            $overTime = Attendance::where('user_id', Auth::id())->whereMonth('checkout', Carbon::now()->month)->whereTime('checkout', '>', Auth::user()->working_to)->count();
+            return response()->json(['attendance' => $attendance, 'absent' => $absent, 'late' => $late, 'early' => $early, 'overtime' => $overTime]);
+        } catch (Exception $e) {
+            Log::info('Error in CurrentMonthAttendanceReport from AttendanceController : ' . $e);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
     }
 }
