@@ -12,6 +12,7 @@
 <body class="h-screen w-screen flex">
     <x-employee-menu />
     <div class="flex-1">
+        <x-employee-page-header />
         <h1>Attendance History</h1>
         <table class="w-full border-collapse border border-slate-400 text-left">
             <thead class="bg-slate-50">
