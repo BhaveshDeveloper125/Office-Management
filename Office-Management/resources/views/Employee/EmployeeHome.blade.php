@@ -234,8 +234,6 @@
                     workingdays.innerHTML = '';
                     workingdays.textContent = result.currentworkingdays;
 
-                    console.log(result.currentworkingdays);
-
                     const today = new Date().getDate();
 
                     let remainingworkingdays = document.querySelector('#remainingworkingdays');

@@ -21,7 +21,20 @@ class Holiday extends Model
     protected static function booted()
     {
         static::saving(function ($model) {
-            $model->days = Carbon::parse($model->from)->diffInDays(Carbon::parse($model->to)) + 1;
+            $from = Carbon::parse($model->from);
+            $to = Carbon::parse($model->to);
+
+            $workingDays = 0;
+            $weekends = WeeklyHoliday::pluck('day')->toArray();
+
+            while ($from->lte($to)) {
+                if (!in_array($from->isoWeekday(), $weekends)) {
+                    $workingDays++;
+                }
+                $from->addDay();
+            }
+
+            $model->days = $workingDays;
         });
 
         static::creating(function ($model) {

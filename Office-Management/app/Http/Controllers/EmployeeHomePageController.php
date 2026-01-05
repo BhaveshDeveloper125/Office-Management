@@ -36,10 +36,12 @@ class EmployeeHomePageController extends Controller
             // In this case (for example from 28 jan to 5 feb) if the current month is january then it only display the 4 which is only current month
             $CurrentMonthHoliday = Holiday::whereMonth('from', Carbon::now()->month)->whereMonth('to', Carbon::now()->month)->sum('days');
             $HolidaysStartingThisMonthEndingLater = Holiday::whereMonth('from', Carbon::now()->month)->whereMonth('to', '!=', Carbon::now()->month)->whereYear('from', Carbon::now()->year)->value('from');
-            $Day = Carbon::parse($HolidaysStartingThisMonthEndingLater)->day;
-            $LastMonthDate = Carbon::now()->daysInMonth;
-
-            $EndingMonthholiday = $LastMonthDate - $Day + 1;
+            $EndingMonthholiday = 0;
+            if ($HolidaysStartingThisMonthEndingLater) {
+                $Day = Carbon::parse($HolidaysStartingThisMonthEndingLater)->day;
+                $LastMonthDate = Carbon::now()->daysInMonth;
+                $EndingMonthholiday = $LastMonthDate - $Day + 1;
+            }
 
             $holiday = $EndingMonthholiday + $CurrentMonthHoliday;
             $currentworkingdays = $counter  - $holiday;

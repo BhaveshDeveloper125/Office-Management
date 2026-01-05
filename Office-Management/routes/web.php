@@ -25,7 +25,6 @@ Route::get('/', function () {
 
 Route::view('/login_page', 'Login')->name('Login Page');
 Route::post('/login', [Usercontroller::class, 'Login'])->name('login');
-Route::post('/logout', [Usercontroller::class, 'Logout'])->name('logout');
 
 Route::middleware(AuthcheckMiddleware::class)->group(function () {
 
@@ -37,6 +36,7 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::get('/current_month_attendace_summary', [AttendanceController::class, 'CurrentMonthAttendanceReport']);
     Route::get('/current_month_holiday', [HolidayController::class, 'GetCurrentMonthHolidayCount']);
     Route::get('/current_month_workin_days', [EmployeeHomePageController::class, 'CurrentMonthWorkingDays']);
+    Route::get('/late_checkouts', [AttendanceController::class, 'LateCheckOutList']);
 
     Route::get('/edit_employee/{user}', function (User $user) {
         return view('Admin.EditEmployee', ['user' => $user]);
@@ -54,6 +54,9 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::post('/set_holiday', [HolidayController::class, 'AddHoliday']);
     Route::post('/checkin', [AttendanceController::class, 'CheckIn'])->name('CheckIn');
     Route::post('/checkout', [AttendanceController::class, 'CheckOut'])->name('CheckOut');
+    Route::post('/after_checkouts', [AttendanceController::class, 'AfterCheckouts'])->name('AfterCheckouts');
+
+    Route::post('/logout', [Usercontroller::class, 'Logout'])->name('logout');
 
     Route::put('/update_emp_details', [Usercontroller::class, 'UpdateEmp'])->name('UpdateEmpDetails');
     Route::put('/change_password', [Usercontroller::class, 'ChangePassword'])->name('ChangePassword');

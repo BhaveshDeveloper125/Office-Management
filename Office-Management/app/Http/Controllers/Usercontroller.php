@@ -53,18 +53,6 @@ class Usercontroller extends Controller
         }
     }
 
-    public function Logout(Request $request)
-    {
-        try {
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-            return redirect()->route('Login Page')->with(['success' => 'User is logout successfully.']);
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
-
     public function GetEmpList()
     {
         try {
@@ -158,6 +146,18 @@ class Usercontroller extends Controller
         } catch (Exception $e) {
             Log::info("Error in DeleteEmployee: " . $e);
             return redirect()->back()->with(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function Logout(Request $request)
+    {
+        try {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('Login Page')->with(['success' => 'User is logout successfully.']);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

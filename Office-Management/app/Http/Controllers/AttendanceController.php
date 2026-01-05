@@ -43,11 +43,45 @@ class AttendanceController extends Controller
         }
     }
 
+    public function LateCheckOutList()
+    {
+        try {
+            $attendance = Attendance::where('user_id', Auth::id())->where('checkout', null)->with('user:id,name,email,mobile,post,qualification')->get(['id', 'user_id', 'checkin']);
+            return response()->json(['attendance' => $attendance]);
+        } catch (Exception $e) {
+            Log::info("Error in LateCheckOut from AttendanceController : " . $e);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function AfterCheckouts(Request $request)
+    {
+        try {
+            $validation = $request->validate([
+                'id' => 'required|numeric|exists:attendances,id',
+                'checkout' => 'required|date',
+            ]);
+
+            $attendance = Attendance::where('id', $validation['id'])->whereNull('checkout')->first();
+
+            if (!$attendance) {
+                return response()->json(['error' => 'Checkin details not found or already checked out.'], 404);
+            }
+
+            $attendance->update(['checkout' => $validation['checkout']]);
+
+            return response()->json(['success' => 'Checkout successfully.']);
+        } catch (Exception $e) {
+            Log::info("Error in AfterCheckouts from AttendanceController : " . $e);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
     public function EmpHistory()
     {
         try {
-            // $History = Attendance::whereMonth('checkin', Carbon::now()->month)->where('user_id', Auth::id())->with('user:id,working_from,working_to,hours')->get();
-            $History = Attendance::where('user_id', Auth::id())->with('user:id,working_from,working_to,hours')->get();
+            $History = Attendance::whereMonth('checkin', Carbon::now()->month)->where('user_id', Auth::id())->with('user:id,working_from,working_to,hours')->get();
+            // $History = Attendance::where('user_id', Auth::id())->with('user:id,working_from,working_to,hours')->get();
             return response()->json(['History' => $History]);
         } catch (Exception $e) {
             Log::info("Error in EmpHistory from AttendanceController : " . $e);

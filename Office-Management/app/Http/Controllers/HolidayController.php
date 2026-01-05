@@ -89,9 +89,13 @@ class HolidayController extends Controller
             // In this case (for example from 28 jan to 5 feb) if the current month is january then it only display the 4 which is only current month
 
             $HolidaysStartingThisMonthEndingLater = Holiday::whereMonth('from', Carbon::now()->month)->whereMonth('to', '!=', Carbon::now()->month)->whereYear('from', Carbon::now()->year)->value('from');
-            $Day = Carbon::parse($HolidaysStartingThisMonthEndingLater)->day;
-            $LastMonthDate = Carbon::now()->daysInMonth;
-            $EndingMonthholiday = $LastMonthDate - $Day + 1;
+            if ($HolidaysStartingThisMonthEndingLater !== null) {
+                $Day = Carbon::parse($HolidaysStartingThisMonthEndingLater)->day;
+                $LastMonthDate = Carbon::now()->daysInMonth;
+                $EndingMonthholiday = $LastMonthDate - $Day + 1;
+            } else {
+                $EndingMonthholiday = 0;
+            }
 
             return response()->json(['holiday' => $EndingMonthholiday + $CurrentMonthHoliday]);
         } catch (Exception $e) {
