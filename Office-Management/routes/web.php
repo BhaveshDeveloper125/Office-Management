@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\EmployeeHomePageController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\Usercontroller;
@@ -34,6 +35,8 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::get('/holidays', [HolidayController::class, 'GetHoliday']);
     Route::get('/emp/history', [AttendanceController::class, 'EmpHistory']);
     Route::get('/current_month_attendace_summary', [AttendanceController::class, 'CurrentMonthAttendanceReport']);
+    Route::get('/current_month_holiday', [HolidayController::class, 'GetCurrentMonthHolidayCount']);
+    Route::get('/current_month_workin_days', [EmployeeHomePageController::class, 'CurrentMonthWorkingDays']);
 
     Route::get('/edit_employee/{user}', function (User $user) {
         return view('Admin.EditEmployee', ['user' => $user]);
@@ -59,14 +62,11 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::delete('/remove_weekend', [WeeklyHolidayController::class, 'RemoveWeekends']);
     Route::delete('/remove_holiday', [HolidayController::class, 'RemoveHoliday']);
 
-    Route::view('/admin', 'Admin.AdminHomePage')->middleware('role:Super Admin');
-    // Route::view('/admin', 'Admin.AdminHomePage');
+    // Route::view('/admin', 'Admin.AdminHomePage')->middleware('role:Super Admin');
+    Route::view('/admin', 'Admin.AdminHomePage');
     Route::view('/add_emp', 'Admin.AddEmployees');
     Route::view('/emp_details', 'Admin.EmployeeDetails');
     Route::view('/manage_holiday', 'Admin.HolidayManagement');
     Route::view('/attendance', 'Employee.Attendance');
     Route::view('/emp_attendance', 'Employee.EmployeeAttendance');
 });
-
-
-Route::view('/loginpage', 'Login')->name('LoginPage');

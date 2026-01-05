@@ -53,16 +53,19 @@
             <div class="size-40 bg-red-500 p-3">
                 <a href="" class="size-full bg-yellow-500 block">
                     <h1>Holiday This Month</h1>
+                    <span id="holiday"></span>
                 </a>
             </div>
             <div class="size-40 bg-red-500 p-3">
                 <a href="" class="size-full bg-yellow-500 block">
-                    <h1>Working Days of This Month</h1>
+                    <h1>Total Working Days of This Month</h1>
+                    <span id="workingdays"></span>
                 </a>
             </div>
             <div class="size-40 bg-red-500 p-3">
                 <a href="" class="size-full bg-yellow-500 block">
-                    <h1>Remaining Days of This Month</h1>
+                    <h1>Remaining Working Days of This Month</h1>
+                    <span id="remainingworkingdays"></span>
                 </a>
             </div>
         </div>
@@ -157,7 +160,7 @@
 
                 if (!response.ok) {
                     toastr.error(result);
-                    console.log('API error : ', result);
+                    console.log('API Exception : ', result);
                 } else {
 
                     let attendance = document.querySelector('#attendance');
@@ -179,18 +182,74 @@
                     let overtime = document.querySelector('#overtime');
                     overtime.innerHTML = '';
                     overtime.textContent = result.overtime;
-
-
-                    toastr.success(result);
-                    console.log(result);
                 }
 
             } catch (e) {
-                toastr.error(e);
+                console.log(e);
+                toastr.error('API Error : ', e);
+
             }
         });
     </script>
     {{-- /Cards --}}
+
+    {{-- Holiday --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/current_month_holiday');
+                const result = await response.json();
+
+                if (!response.ok) {
+                    toastr.error(result);
+                    console.log('API Exception : ', result);
+                } else {
+
+                    let holiday = document.querySelector('#holiday');
+                    holiday.innerHTML = '';
+                    holiday.textContent = result.holiday;
+
+                }
+
+            } catch (e) {
+                console.log(e);
+                toastr.error('API Error : ', e);
+            }
+        });
+    </script>
+    {{-- /Holiday --}}
+
+    {{-- Total And Remaining Working Days Of This Month --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/current_month_workin_days');
+                const result = await response.json();
+
+                if (!response.ok) {
+                    toastr.error(result);
+                    console.log('API Exception : ', result);
+                } else {
+                    let workingdays = document.querySelector('#workingdays');
+                    workingdays.innerHTML = '';
+                    workingdays.textContent = result.currentworkingdays;
+
+                    console.log(result.currentworkingdays);
+
+                    const today = new Date().getDate();
+
+                    let remainingworkingdays = document.querySelector('#remainingworkingdays');
+                    remainingworkingdays.innerHTML = '';
+                    remainingworkingdays.textContent = result.remainingdays;
+
+                }
+            } catch (e) {
+                console.log(e);
+                toastr.error('API Error : ', e);
+            }
+        });
+    </script>
+    {{-- /Total And Remaining Working Days Of This Month --}}
 
 </body>
 

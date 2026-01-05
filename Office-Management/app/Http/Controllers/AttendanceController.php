@@ -66,7 +66,7 @@ class AttendanceController extends Controller
             return response()->json(['attendance' => $attendance, 'absent' => $absent, 'late' => $late, 'early' => $early, 'overtime' => $overTime]);
         } catch (Exception $e) {
             Log::info('Error in CurrentMonthAttendanceReport from AttendanceController : ' . $e);
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

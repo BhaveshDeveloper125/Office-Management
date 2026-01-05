@@ -79,4 +79,24 @@ class HolidayController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    public function GetCurrentMonthHolidayCount()
+    {
+        try {
+            $CurrentMonthHoliday = Holiday::whereMonth('from', Carbon::now()->month)->whereMonth('to', Carbon::now()->month)->sum('days');
+
+            // Following calculation for the holiday that start from current month and ends in next month (for example from 28 jan to 5 feb)
+            // In this case (for example from 28 jan to 5 feb) if the current month is january then it only display the 4 which is only current month
+
+            $HolidaysStartingThisMonthEndingLater = Holiday::whereMonth('from', Carbon::now()->month)->whereMonth('to', '!=', Carbon::now()->month)->whereYear('from', Carbon::now()->year)->value('from');
+            $Day = Carbon::parse($HolidaysStartingThisMonthEndingLater)->day;
+            $LastMonthDate = Carbon::now()->daysInMonth;
+            $EndingMonthholiday = $LastMonthDate - $Day + 1;
+
+            return response()->json(['holiday' => $EndingMonthholiday + $CurrentMonthHoliday]);
+        } catch (Exception $e) {
+            Log::info("Error in GetCurrentMonthHolidayCount from HolidayController : " . $e);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 }
