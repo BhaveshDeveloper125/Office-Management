@@ -99,6 +99,21 @@ class Usercontroller extends Controller
         }
     }
 
+    public function UpdateUser(UserValidationRequest $request)
+    {
+        try {
+            $Validation = $request->validated();
+            User::find(Auth::id())->update($Validation);
+            return response()->json(['success' => 'User Updated Successfully']);
+        } catch (ValidationException $e) {
+            Log::info(" Error in UpdateUser validation from Usercontroller :  " . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()]);
+        } catch (Exception $e) {
+            Log::info("Error in UpdateUser from Usercontroller : " . $e);
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
     public function SearchEmp(Request $request)
     {
         try {

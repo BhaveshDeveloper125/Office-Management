@@ -60,6 +60,7 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
 
     Route::put('/update_emp_details', [Usercontroller::class, 'UpdateEmp'])->name('UpdateEmpDetails');
     Route::put('/change_password', [Usercontroller::class, 'ChangePassword'])->name('ChangePassword');
+    Route::put('/update_user', [Usercontroller::class, 'UpdateUser'])->name('UpdateUser');
 
     Route::delete('/delete_employee', [Usercontroller::class, 'DeleteEmployee'])->name('DeleteEmployee');
     Route::delete('/remove_weekend', [WeeklyHolidayController::class, 'RemoveWeekends']);
@@ -72,4 +73,5 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::view('/manage_holiday', 'Admin.HolidayManagement');
     Route::view('/attendance', 'Employee.Attendance');
     Route::view('/emp_attendance', 'Employee.EmployeeAttendance');
+    Route::view('/emp/profile', 'Employee.Profile');
 });

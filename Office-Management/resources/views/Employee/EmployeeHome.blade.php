@@ -12,12 +12,7 @@
 <body class="h-screen w-screen flex">
     <x-employee-menu />
     <div class="flex-1">
-        <div class=" p-2 flex ">
-            <h1 class="w-[95%]  text-center">{{ Auth::user()->name }}</h1>
-            <a href="" class="w-[5%]  flex justify-center items-center">
-                <img src="" alt="  " class=" rounded-full object-cover">
-            </a>
-        </div>
+        <x-employee-page-header />
 
         <div class="w-screen bg-green-500 flex gap-2 p-2 flex-wrap ">
             <div class="size-40 bg-red-500 p-3">
