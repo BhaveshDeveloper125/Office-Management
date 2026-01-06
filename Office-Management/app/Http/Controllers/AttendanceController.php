@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class AttendanceController extends Controller
 {
@@ -101,6 +102,26 @@ class AttendanceController extends Controller
         } catch (Exception $e) {
             Log::info('Error in CurrentMonthAttendanceReport from AttendanceController : ' . $e);
             return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function FilterHistory(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'from'=>'required|date',
+                'to'=>'nullable|date',
+            ]);
+
+            $attendance = Attendance::where('user_id', $request->user()->id)->where('checkin', '>=', $validated['from'])->with('user:id,working_from,working_to,hours')->when($validated['to'] ?? null, function ($query, $to) {
+                $query->where('checkin', '<=', Carbon::parse($to)->endOfDay());
+            })->paginate(20);
+            
+
+            return response()->json(['attendance'=>$attendance]);
+        } catch (Exception $e) {
+            Log::info("Error in FilterHistory from AttendanceController : ".$e);
+            return response()->json(['e'=>$e->getMessage()],500);
         }
     }
 }

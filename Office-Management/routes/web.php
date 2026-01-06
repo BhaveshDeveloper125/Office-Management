@@ -7,6 +7,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\Usercontroller;
 use App\Http\Controllers\WeeklyHolidayController;
 use App\Http\Middleware\AuthcheckMiddleware;
+use App\Models\Attendance;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -55,6 +56,7 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::post('/checkin', [AttendanceController::class, 'CheckIn'])->name('CheckIn');
     Route::post('/checkout', [AttendanceController::class, 'CheckOut'])->name('CheckOut');
     Route::post('/after_checkouts', [AttendanceController::class, 'AfterCheckouts'])->name('AfterCheckouts');
+    Route::post('/filter_emp_history',[AttendanceController::class, 'FilterHistory']);
 
     Route::post('/logout', [Usercontroller::class, 'Logout'])->name('logout');
 
