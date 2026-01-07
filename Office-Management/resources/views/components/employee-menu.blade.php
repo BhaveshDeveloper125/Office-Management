@@ -3,7 +3,7 @@
     <br>
     <a href="/emp_attendance">Attendance</a>
     <br>
-    <a href="/">Ask Leave</a>
+    <a href="/emp_leave">Ask Leave</a>
     <br>
     <a href="/attendance">Checkout/Overtime</a>
     <br>

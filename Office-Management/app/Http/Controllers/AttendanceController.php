@@ -81,8 +81,8 @@ class AttendanceController extends Controller
     public function EmpHistory()
     {
         try {
-            $History = Attendance::whereMonth('checkin', Carbon::now()->month)->where('user_id', Auth::id())->with('user:id,working_from,working_to,hours')->get();
-            // $History = Attendance::where('user_id', Auth::id())->with('user:id,working_from,working_to,hours')->get();
+            // $History = Attendance::whereMonth('checkin', Carbon::now()->month)->where('user_id', Auth::id())->with('user:id,working_from,working_to,hours')->get();
+            $History = Attendance::where('user_id', Auth::id())->with('user:id,working_from,working_to,hours')->get();
             return response()->json(['History' => $History]);
         } catch (Exception $e) {
             Log::info("Error in EmpHistory from AttendanceController : " . $e);
@@ -117,7 +117,6 @@ class AttendanceController extends Controller
                 $query->where('checkin', '<=', Carbon::parse($to)->endOfDay());
             })->paginate(20);
             
-
             return response()->json(['attendance'=>$attendance]);
         } catch (Exception $e) {
             Log::info("Error in FilterHistory from AttendanceController : ".$e);

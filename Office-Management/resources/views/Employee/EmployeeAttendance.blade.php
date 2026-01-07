@@ -10,7 +10,7 @@
     <x-link />
 </head>
 
-<body class="h-screen w-screen flex">
+<body class="h-screen w-screen flex bg-black text-white">
     <x-employee-menu />
     <div class="flex-1">
         <x-employee-page-header />
@@ -18,7 +18,7 @@
 
         <br>
 
-        <form action="/filter_emp_history" method="post" id="EmpFilterHistoryForm">
+        <form id="EmpFilterHistoryForm">
             @csrf
             <input type="date" name="from" id="from" required>
             <input type="date" name="to" id="to">
@@ -28,7 +28,7 @@
         <br>
 
         <table class="hidden">
-            <thead class="bg-slate-50">
+            <thead class="">
                 <tr>
                     <th class="border border-slate-300 p-2">Sr no</th>
                     <th class="border border-slate-300 p-2">Date</th>
@@ -48,7 +48,7 @@
         <br>    
 
         <table class="w-full border-collapse border border-slate-400 text-left">
-            <thead class="bg-slate-50">
+            <thead class="">
                 <tr>
                     <th class="border border-slate-300 p-2">Sr no</th>
                     <th class="border border-slate-300 p-2">Date</th>

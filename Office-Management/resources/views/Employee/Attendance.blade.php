@@ -21,7 +21,6 @@
         }
 
         th {
-            background-color: #f2f2f2;
             font-weight: bold;
         }
 
@@ -36,7 +35,7 @@
     <x-link />
 </head>
 
-<body class="h-screen w-screen flex">
+<body class="h-screen w-screen flex bg-black text-white">
     <x-employee-menu />
     <div class="flex-1">
         <x-employee-page-header />
@@ -96,7 +95,6 @@
                         checkout.appendChild(tr);
                     });
 
-                    // Only attach event listeners once, not on every refresh
                     if (!formEventListenersAttached) {
                         attachFormEventListeners(result.attendance);
                         formEventListenersAttached = true;

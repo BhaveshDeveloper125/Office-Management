@@ -3,15 +3,14 @@
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\EmployeeHomePageController;
 use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\Usercontroller;
 use App\Http\Controllers\WeeklyHolidayController;
 use App\Http\Middleware\AuthcheckMiddleware;
-use App\Models\Attendance;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Spatie\Permission\Models\Role;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -57,6 +56,7 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::post('/checkout', [AttendanceController::class, 'CheckOut'])->name('CheckOut');
     Route::post('/after_checkouts', [AttendanceController::class, 'AfterCheckouts'])->name('AfterCheckouts');
     Route::post('/filter_emp_history',[AttendanceController::class, 'FilterHistory']);
+    Route::post('/create_leave',[LeaveController::class, 'CreateLeave'])->name('CreateLeave');
 
     Route::post('/logout', [Usercontroller::class, 'Logout'])->name('logout');
 
@@ -76,4 +76,5 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::view('/attendance', 'Employee.Attendance');
     Route::view('/emp_attendance', 'Employee.EmployeeAttendance');
     Route::view('/emp/profile', 'Employee.Profile');
+    Route::view('/emp_leave','Employee.AskLeave');
 });
