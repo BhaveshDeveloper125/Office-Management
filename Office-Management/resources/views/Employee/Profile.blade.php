@@ -9,7 +9,7 @@
     <x-link />
 </head>
 
-<body class="h-screen w-screen flex">
+<body class="h-screen w-screen flex bg-black text-white">
     <x-employee-menu />
     <div class="flex-1">
         <x-employee-page-header />

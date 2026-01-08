@@ -44,8 +44,8 @@
             </thead>
             <tbody id="EmpHistoryFilter"></tbody>
         </table>
-        
-        <br>    
+
+        <br>
 
         <table class="w-full border-collapse border border-slate-400 text-left">
             <thead class="">
@@ -62,26 +62,21 @@
                     <th class="border border-slate-300 p-2">Working Time To</th>
                 </tr>
             </thead>
-            <tbody id="EmpHistory">
-                <tr>
-                    <td colspan="8" class="border border-slate-300 p-4 text-center text-gray-500">
-                        Empty
-                    </td>
-                </tr>
-            </tbody>
+            <tbody id="EmpHistory"></tbody>
         </table>
     </div>
 
     <script>
-        document.querySelector('#EmpFilterHistoryForm').addEventListener('submit' , EmpFilterHistoryForm);
+        document.querySelector('#EmpFilterHistoryForm').addEventListener('submit', EmpFilterHistoryForm);
 
         async function EmpFilterHistoryForm(e) {
             e.preventDefault();
             try {
-                const response = await fetch('/filter_emp_history',{
-                    method:"POST",
+                const response = await fetch('/filter_emp_history', {
+                    method: "POST",
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content')
                     },
                     body: new FormData(e.target),
                 });
@@ -90,12 +85,12 @@
                 if (!response.ok) {
                     toastr.error(result.error);
                     console.error(result.error);
-                }else{
+                } else {
 
                     let EmpHistoryFilter = document.querySelector('#EmpHistoryFilter');
-                    EmpHistoryFilter.innerHTML='';
+                    EmpHistoryFilter.innerHTML = '';
                     EmpHistoryFilter.parentElement.classList.remove('hidden');
-                    
+
                     let index = 0;
 
                     result.attendance.data.forEach(i => {
@@ -138,7 +133,6 @@
                 console.error(e);
             }
         }
-
     </script>
 
     {{-- Current Month Attendance History --}}

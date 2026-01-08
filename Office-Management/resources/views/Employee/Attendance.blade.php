@@ -40,6 +40,8 @@
     <div class="flex-1">
         <x-employee-page-header />
 
+        <h1>Marking the false checkout is punishable offence.</h1>
+
         <table>
             <tr>
                 <th>Sr no</th>

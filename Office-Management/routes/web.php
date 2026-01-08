@@ -37,6 +37,7 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::get('/current_month_holiday', [HolidayController::class, 'GetCurrentMonthHolidayCount']);
     Route::get('/current_month_workin_days', [EmployeeHomePageController::class, 'CurrentMonthWorkingDays']);
     Route::get('/late_checkouts', [AttendanceController::class, 'LateCheckOutList']);
+    Route::get('/getempleave', [LeaveController::class, 'GetEmpLeaves'])->name('GetEmpLeaves');
 
     Route::get('/edit_employee/{user}', function (User $user) {
         return view('Admin.EditEmployee', ['user' => $user]);
@@ -55,8 +56,8 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::post('/checkin', [AttendanceController::class, 'CheckIn'])->name('CheckIn');
     Route::post('/checkout', [AttendanceController::class, 'CheckOut'])->name('CheckOut');
     Route::post('/after_checkouts', [AttendanceController::class, 'AfterCheckouts'])->name('AfterCheckouts');
-    Route::post('/filter_emp_history',[AttendanceController::class, 'FilterHistory']);
-    Route::post('/create_leave',[LeaveController::class, 'CreateLeave'])->name('CreateLeave');
+    Route::post('/filter_emp_history', [AttendanceController::class, 'FilterHistory']);
+    Route::post('/create_leave', [LeaveController::class, 'CreateLeave'])->name('CreateLeave');
 
     Route::post('/logout', [Usercontroller::class, 'Logout'])->name('logout');
 
@@ -76,5 +77,5 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::view('/attendance', 'Employee.Attendance');
     Route::view('/emp_attendance', 'Employee.EmployeeAttendance');
     Route::view('/emp/profile', 'Employee.Profile');
-    Route::view('/emp_leave','Employee.AskLeave');
+    Route::view('/emp_leave', 'Employee.AskLeave');
 });
