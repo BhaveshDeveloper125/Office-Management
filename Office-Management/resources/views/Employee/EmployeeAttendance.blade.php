@@ -66,6 +66,7 @@
         </table>
     </div>
 
+    {{-- Filter History --}}
     <script>
         document.querySelector('#EmpFilterHistoryForm').addEventListener('submit', EmpFilterHistoryForm);
 
@@ -134,6 +135,8 @@
             }
         }
     </script>
+    {{-- /Filter History --}}
+
 
     {{-- Current Month Attendance History --}}
     <script>
@@ -156,13 +159,13 @@
                         let tag;
 
                         if (i.checkin > i.user.working_from) {
-                            tag = 'Late';
-                        } else if (i.checkin < i.user.working_from) {
-                            tag = 'Early';
-                        } else {
-                            tag = '-';
+                            tag = `<span class="bg-yellow-500 text-red-500  m-2 ">Late</span>`;
                         }
 
+                        if (i.checkout > i.user.working_to) {
+                            tag +=
+                                `<span class="bg-yellow-500 text-red-500  m-2 ">  Early leave</span>`;
+                        }
 
                         tr.innerHTML = `
                             <td  class="border border-slate-300 p-4 text-center text-gray-500">${index}</td>
@@ -171,7 +174,9 @@
                             <td  class="border border-slate-300 p-4 text-center text-gray-500">${new Date(i.checkin).toLocaleTimeString('en-GB')}</td>
                             <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.checkout !== null ?  new Date(i.checkout).toLocaleTimeString('en-GB') : '-'}</td>
                             <td  class="border border-slate-300 p-4 text-center text-gray-500">${tag}</td>
-                            <td class="border border-slate-300 p-4 text-center text-gray-500"> ${(i.hours || '0:0:0').split(':').slice(0,2).map((v, index) => `${parseInt(v)} ${index === 0 ? 'hr' : 'min'} `).join(' ')} </td>
+                            <td class="border border-slate-300 p-4 text-center ${parseInt(i.hours) < 9 ? 'text-red-500' : 'text-gray-500'}"> 
+                                ${(i.hours || '0:0:0').split(':').slice(0,2).map((v, index) => `${parseInt(v)} ${index === 0 ? 'hr' : 'min'} `).join(' ')} 
+                            </td>
                             <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.user.hours} hr</td>
                             <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.user.working_from}</td>
                             <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.user.working_to}</td>
