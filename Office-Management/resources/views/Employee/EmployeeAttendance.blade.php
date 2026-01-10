@@ -126,7 +126,6 @@
 
 
                     toastr.success('Success');
-                    console.log(result);
                 }
 
             } catch (e) {
@@ -156,15 +155,36 @@
                     result.History.forEach(i => {
                         index++;
                         let tr = document.createElement('tr');
-                        let tag;
 
-                        if (i.checkin > i.user.working_from) {
-                            tag = `<span class="bg-yellow-500 text-red-500  m-2 ">Late</span>`;
+                        let tag = '';
+                        const checkinDate = new Date(i.checkin);
+                        const checkinTotalMinutes = (checkinDate.getHours() * 60) + checkinDate
+                            .getMinutes();
+
+                        const [h, m] = i.user.working_from.split(':');
+                        const workTotalMinutes = (parseInt(h) * 60) + parseInt(m);
+
+                        if (checkinTotalMinutes > workTotalMinutes) {
+                            tag = `<span class="bg-yellow-500 text-red-500 m-2">Late</span>`;
                         }
 
-                        if (i.checkout > i.user.working_to) {
-                            tag +=
-                                `<span class="bg-yellow-500 text-red-500  m-2 ">  Early leave</span>`;
+                        if (i.checkout) {
+
+                            const checkoutDate = new Date(i.checkout);
+                            const checkoutTotalMinutes = (checkoutDate.getHours() * 60) + checkoutDate
+                                .getMinutes();
+
+                            const [h_end, m_end] = i.user.working_to.split(':');
+                            const workEndTotalMinutes = (parseInt(h_end) * 60) + parseInt(m_end);
+
+                            if (checkoutTotalMinutes < workEndTotalMinutes) {
+                                tag +=
+                                    `<span class="bg-yellow-500 text-red-500 m-2">Early leave</span>`;
+                            }
+                        }
+
+                        if (tag === '') {
+                            tag = '-';
                         }
 
                         tr.innerHTML = `
