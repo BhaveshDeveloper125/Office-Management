@@ -92,11 +92,11 @@ class AttendanceController extends Controller
     public function CurrentMonthAttendanceReport()
     {
         try {
-            $attendance = Attendance::whereMonth('checkin', Carbon::now()->month)->where('user_id', Auth::id())->count();
+            $attendance = Attendance::whereYear('checkin', Carbon::now()->year)->whereMonth('checkin', Carbon::now()->month)->where('user_id', Auth::id())->count();
             $absent = Carbon::now()->day - $attendance;
-            $late = Attendance::where('user_id', Auth::id())->whereMonth('checkin', Carbon::now()->month)->whereTime('checkin', '>', Auth::user()->working_from)->count();
-            $early = Attendance::where('user_id', Auth::id())->whereMonth('checkout', Carbon::now()->month)->whereTime('checkout', '<', Auth::user()->working_to)->count();
-            $overTime = Attendance::where('user_id', Auth::id())->whereMonth('checkout', Carbon::now()->month)->whereTime('checkout', '>', Auth::user()->working_to)->count();
+            $late = Attendance::whereYear('checkin', Carbon::now()->year)->where('user_id', Auth::id())->whereMonth('checkin', Carbon::now()->month)->whereTime('checkin', '>', Auth::user()->working_from)->count();
+            $early = Attendance::whereYear('checkin', Carbon::now()->year)->where('user_id', Auth::id())->whereMonth('checkout', Carbon::now()->month)->whereTime('checkout', '<', Auth::user()->working_to)->count();
+            $overTime = Attendance::whereYear('checkin', Carbon::now()->year)->where('user_id', Auth::id())->whereMonth('checkout', Carbon::now()->month)->whereTime('checkout', '>', Auth::user()->working_to)->count();
             return response()->json(['attendance' => $attendance, 'absent' => $absent, 'late' => $late, 'early' => $early, 'overtime' => $overTime]);
         } catch (Exception $e) {
             Log::info('Error in CurrentMonthAttendanceReport from AttendanceController : ' . $e);

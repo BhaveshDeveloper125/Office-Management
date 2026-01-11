@@ -34,8 +34,8 @@ class EmployeeHomePageController extends Controller
             // ------------------------------ Holiday Count ------------------------------//
             // Following calculation for the holiday that start from current month and ends in next month (for example from 28 jan to 5 feb)
             // In this case (for example from 28 jan to 5 feb) if the current month is january then it only display the 4 which is only current month
-            $CurrentMonthHoliday = Holiday::whereMonth('from', Carbon::now()->month)->whereMonth('to', Carbon::now()->month)->sum('days');
-            $HolidaysStartingThisMonthEndingLater = Holiday::whereMonth('from', Carbon::now()->month)->whereMonth('to', '!=', Carbon::now()->month)->whereYear('from', Carbon::now()->year)->value('from');
+            $CurrentMonthHoliday = Holiday::whereYear('from', Carbon::now()->year)->whereMonth('from', Carbon::now()->month)->whereMonth('to', Carbon::now()->month)->sum('days');
+            $HolidaysStartingThisMonthEndingLater = Holiday::whereYear('from', Carbon::now()->year)->whereMonth('from', Carbon::now()->month)->whereMonth('to', '!=', Carbon::now()->month)->whereYear('from', Carbon::now()->year)->value('from');
             $EndingMonthholiday = 0;
             if ($HolidaysStartingThisMonthEndingLater) {
                 $Day = Carbon::parse($HolidaysStartingThisMonthEndingLater)->day;
@@ -57,7 +57,7 @@ class EmployeeHomePageController extends Controller
                 $currentDate->addDay();
             }
 
-            $RemainingHoliday = Holiday::whereMonth('from', Carbon::now()->month)->whereMonth('to', Carbon::now()->month)->where('from', '>', Carbon::now())->sum('days');
+            $RemainingHoliday = Holiday::whereYear('from', Carbon::now()->year)->whereMonth('from', Carbon::now()->month)->whereMonth('to', Carbon::now()->month)->where('from', '>', Carbon::now())->sum('days');
             $TotalRemovableDays = $RemainingHoliday + $EndingMonthholiday;
             $Remainingdays = $RemainingDaysExcludingWeekend - $TotalRemovableDays;
             // ------------------------------ /Remaining Working Day Count ------------------------------//
