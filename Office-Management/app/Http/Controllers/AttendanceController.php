@@ -93,7 +93,20 @@ class AttendanceController extends Controller
     {
         try {
             $attendance = Attendance::whereYear('checkin', Carbon::now()->year)->whereMonth('checkin', Carbon::now()->month)->where('user_id', Auth::id())->count();
-            $absent = Carbon::now()->day - $attendance;
+
+            $joiningDate = Carbon::parse(Auth::user()->joining);
+            $today = Carbon::now();
+
+            if ($joiningDate->isSameMonth($today)) {
+                $totalDaysPassed = $today->day - $joiningDate->day + 1;
+
+                $totalDaysPassed = max(0, $totalDaysPassed);
+
+                $absent = $totalDaysPassed - $attendance;
+            } else {
+                $absent = $today->day - $attendance;
+            }
+
             $late = Attendance::whereYear('checkin', Carbon::now()->year)->where('user_id', Auth::id())->whereMonth('checkin', Carbon::now()->month)->whereTime('checkin', '>', Auth::user()->working_from)->count();
             $early = Attendance::whereYear('checkin', Carbon::now()->year)->where('user_id', Auth::id())->whereMonth('checkout', Carbon::now()->month)->whereTime('checkout', '<', Auth::user()->working_to)->count();
             $overTime = Attendance::whereYear('checkin', Carbon::now()->year)->where('user_id', Auth::id())->whereMonth('checkout', Carbon::now()->month)->whereTime('checkout', '>', Auth::user()->working_to)->count();
