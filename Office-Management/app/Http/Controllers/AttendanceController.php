@@ -81,8 +81,7 @@ class AttendanceController extends Controller
     public function EmpHistory()
     {
         try {
-            // $History = Attendance::whereMonth('checkin', Carbon::now()->month)->where('user_id', Auth::id())->with('user:id,working_from,working_to,hours')->get();
-            $History = Attendance::where('user_id', Auth::id())->with('user:id,working_from,working_to,hours')->get();
+            $History = Attendance::whereYear('checkin', Carbon::now()->year)->whereMonth('checkin', Carbon::now()->month)->where('user_id', Auth::id())->with('user:id,working_from,working_to,hours')->get();
             return response()->json(['History' => $History]);
         } catch (Exception $e) {
             Log::info("Error in EmpHistory from AttendanceController : " . $e);
@@ -109,18 +108,22 @@ class AttendanceController extends Controller
     {
         try {
             $validated = $request->validate([
-                'from'=>'required|date',
-                'to'=>'nullable|date',
+                'from' => 'required|date',
+                'to' => 'nullable|date',
             ]);
 
             $attendance = Attendance::where('user_id', $request->user()->id)->where('checkin', '>=', $validated['from'])->with('user:id,working_from,working_to,hours')->when($validated['to'] ?? null, function ($query, $to) {
                 $query->where('checkin', '<=', Carbon::parse($to)->endOfDay());
             })->paginate(20);
-            
-            return response()->json(['attendance'=>$attendance]);
+
+            $attendances = $attendance->toArray();
+            $attendances['next'] = $attendance->hasMorePages() ? $attendance->currentPage() + 1 : null;
+            $attendances['prev'] = $attendance->onFirstPage() ? null : $attendance->currentPage() - 1;
+
+            return response()->json(['attendance' => $attendances]);
         } catch (Exception $e) {
-            Log::info("Error in FilterHistory from AttendanceController : ".$e);
-            return response()->json(['e'=>$e->getMessage()],500);
+            Log::info("Error in FilterHistory from AttendanceController : " . $e);
+            return response()->json(['e' => $e->getMessage()], 500);
         }
     }
 }

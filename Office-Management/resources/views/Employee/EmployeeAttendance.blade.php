@@ -44,6 +44,7 @@
             </thead>
             <tbody id="EmpHistoryFilter"></tbody>
         </table>
+        <div id="paginationContainer"></div>
 
         <br>
 
@@ -68,18 +69,25 @@
 
     {{-- Filter History --}}
     <script>
-        document.querySelector('#EmpFilterHistoryForm').addEventListener('submit', EmpFilterHistoryForm);
-
-        async function EmpFilterHistoryForm(e) {
+        document.querySelector('#EmpFilterHistoryForm').addEventListener('submit', (e) => {
             e.preventDefault();
+            EmpFilterHistoryForm(1, true);
+        });
+
+        async function EmpFilterHistoryForm(page, isFormSubmission = false) {
             try {
-                const response = await fetch('/filter_emp_history', {
+                let currentPage = 1;
+
+                page = page || currentPage;
+                currentPage = page;
+
+                const response = await fetch(`/filter_emp_history?page=${page}`, {
                     method: "POST",
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
                             'content')
                     },
-                    body: new FormData(e.target),
+                    body: new FormData(document.querySelector('#EmpFilterHistoryForm')),
                 });
                 const result = await response.json();
 
@@ -95,7 +103,6 @@
                     let index = 0;
 
                     result.attendance.data.forEach(i => {
-                        index++;
                         let tr = document.createElement('tr');
                         let tag;
 
@@ -109,23 +116,87 @@
 
 
                         tr.innerHTML = `
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${index}</td>
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${new Date(i.created_at).toLocaleDateString('en-GB')}</td>
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${new Date(i.created_at).toLocaleDateString('en-GB' , {weekday:'short'})}</td>
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${new Date(i.checkin).toLocaleTimeString('en-GB')}</td>
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.checkout !== null ?  new Date(i.checkout).toLocaleTimeString('en-GB') : '-'}</td>
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${tag}</td>
-                            <td class="border border-slate-300 p-4 text-center text-gray-500"> ${(i.hours || '0:0:0').split(':').slice(0,2).map((v, index) => `${parseInt(v)} ${index === 0 ? 'hr' : 'min'} `).join(' ')} </td>
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.user.hours} hr</td>
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.user.working_from}</td>
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.user.working_to}</td>
-                        `;
+                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${result.attendance.from + index}</td>
+                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${new Date(i.created_at).toLocaleDateString('en-GB')}</td>
+                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${new Date(i.created_at).toLocaleDateString('en-GB' , {weekday:'short'})}</td>
+                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${new Date(i.checkin).toLocaleTimeString('en-GB')}</td>
+                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.checkout !== null ?  new Date(i.checkout).toLocaleTimeString('en-GB') : '-'}</td>
+                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${tag}</td>
+                                <td class="border border-slate-300 p-4 text-center text-gray-500"> ${(i.hours || '0:0:0').split(':').slice(0,2).map((v, index) => `${parseInt(v)} ${index === 0 ? 'hr' : 'min'} `).join(' ')} </td>
+                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.user.hours} hr</td>
+                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.user.working_from}</td>
+                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.user.working_to}</td>
+                            `;
                         EmpHistoryFilter.appendChild(tr);
+                        index++;
                     });
 
+                    if (isFormSubmission) {
+                        toastr.success('Success');
+                    }
 
+                    // Pagination start
+                    let paginationContainer = document.querySelector('#paginationContainer');
+                    paginationContainer.innerHTML = '';
 
-                    toastr.success('Success');
+                    if (result.attendance.total > result.attendance.per_page) {
+
+                        let jumpToFirstPageBtn = document.createElement('button');
+                        jumpToFirstPageBtn.innerText = '<<';
+                        jumpToFirstPageBtn.classList = 'p-4';
+                        jumpToFirstPageBtn.onclick = () => EmpFilterHistoryForm(1);
+
+                        let prevPageBtn = document.createElement('button');
+                        prevPageBtn.innerText = 'prev';
+                        prevPageBtn.classList = 'p-4';
+
+                        if (result.attendance.prev_page_url) {
+                            prevPageBtn.onclick = () => EmpFilterHistoryForm(result.attendance.current_page - 1);
+                        } else {
+                            prevPageBtn.disabled = true;
+                        }
+
+                        let nextPageBtn = document.createElement('button');
+                        nextPageBtn.innerText = 'next';
+                        nextPageBtn.classList = 'p-4';
+
+                        if (result.attendance.next_page_url) {
+                            nextPageBtn.onclick = () => EmpFilterHistoryForm(result.attendance.current_page + 1);
+                        } else {
+                            nextPageBtn.disabled = true;
+                        }
+
+                        let jumpToLastPageBtn = document.createElement('button');
+                        jumpToLastPageBtn.innerText = '>>';
+                        jumpToLastPageBtn.classList = 'p-4';
+                        jumpToLastPageBtn.onclick = () => EmpFilterHistoryForm(result.attendance.last_page);
+
+                        paginationContainer.append(jumpToFirstPageBtn, prevPageBtn);
+
+                        let start = Math.max(1, result.attendance.current_page - 1);
+                        let end = Math.min(start + 2, result.attendance.last_page);
+
+                        if (result.attendance.current_page === result.attendance.last_page) {
+                            start = Math.max(1, result.attendance.last_page - 2);
+                            end = result.attendance.last_page;
+                        }
+
+                        for (let i = start; i <= end; i++) {
+                            let pageBtn = document.createElement('button');
+                            pageBtn.innerText = i;
+                            pageBtn.className = 'p-2';
+
+                            if (i === result.attendance.current_page) {
+                                pageBtn.className = 'p-2 bg-blue-800 text-white';
+                            }
+
+                            pageBtn.onclick = () => EmpFilterHistoryForm(i);
+                            paginationContainer.appendChild(pageBtn);
+                        }
+
+                        paginationContainer.append(nextPageBtn, jumpToLastPageBtn);
+                    }
+                    // Pagination ends
                 }
 
             } catch (e) {

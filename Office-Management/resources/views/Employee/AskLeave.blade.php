@@ -33,6 +33,8 @@
             <input type="submit" value="Request">
         </form>
 
+        <br><br>
+
         <table>
             <tr>
                 <th>Title</th>
@@ -43,8 +45,10 @@
                 <th>Description</th>
                 <th>Approve</th>
             </tr>
-            <tbody id="leaveTable"></tbody>
+            <tbody id="leaveTable" class="flex justify-between gap-4"></tbody>
         </table>
+        <div id="paginationContainer"></div>
+
 
         {{-- Submit Leave Request --}}
         <script>
@@ -60,6 +64,7 @@
                     if (!response.ok) {
                         toastr.error(result.error);
                     } else {
+                        GetEmpLeaves();
                         toastr.success(result.success);
                     }
 
@@ -72,9 +77,14 @@
 
         {{-- Get Leaves --}}
         <script>
-            try {
-                document.addEventListener('DOMContentLoaded', async () => {
-                    const response = await fetch('/getempleave');
+            async function GetEmpLeaves(page) {
+                try {
+                    let currentPage = 1;
+
+                    page = page || currentPage;
+                    currentPage = page;
+
+                    const response = await fetch(`/getempleave?page=${page}`);
                     const result = await response.json();
 
                     if (!response.ok) {
@@ -100,10 +110,82 @@
 
                     }
 
-                });
-            } catch (e) {
-                toastr.error(e);
+                    // Pagination start
+                    let paginationContainer = document.querySelector('#paginationContainer');
+                    paginationContainer.innerHTML = '';
+
+                    let jumpToFirstPageBtn = document.createElement('button');
+                    jumpToFirstPageBtn.innerText = '<<';
+                    jumpToFirstPageBtn.classList = 'p-4';
+                    jumpToFirstPageBtn.onclick = () => GetEmpLeaves(1);
+
+                    let prevPageBtn = document.createElement('button');
+                    prevPageBtn.innerText = 'prev';
+                    prevPageBtn.classList = 'p-4';
+
+                    if (result.leaves.prev) {
+                        prevPageBtn.onclick = () => GetEmpLeaves(result.leaves.prev);
+                    } else {
+                        prevPageBtn.disabled = true;
+                    }
+
+                    let nextPageBtn = document.createElement('button');
+                    nextPageBtn.innerText = 'next';
+                    nextPageBtn.classList = 'p-4';
+
+                    if (result.leaves.next) {
+                        nextPageBtn.onclick = () => GetEmpLeaves(result.leaves.next);
+                    } else {
+                        nextPageBtn.disabled = true;
+                    }
+
+                    let jumpToLastPageBtn = document.createElement('button');
+                    jumpToLastPageBtn.innerText = '>>';
+                    jumpToLastPageBtn.onclick = () => GetEmpLeaves(result.leaves.last_page);
+
+                    paginationContainer.append(jumpToFirstPageBtn, prevPageBtn);
+
+                    let limit = Math.ceil(result.leaves.current_page / 3) * 3;
+
+                    if (result.leaves.current_page % 3 === 0) {
+                        limit += 3;
+                    }
+
+                    if (limit > result.leaves.last_page) {
+                        limit = result.leaves.last_page;
+                    }
+
+                    for (let i = 1; i <= limit; i++) {
+                        let pageBtn = document.createElement('button');
+                        pageBtn.innerText = i;
+                        pageBtn.className = 'p-2';
+
+                        if (i === result.leaves.current_page) {
+                            pageBtn.className = 'p-2 bg-blue-800 text-white';
+                        }
+
+                        pageBtn.onclick = () => GetEmpLeaves(i);
+                        paginationContainer.appendChild(pageBtn);
+                    }
+
+                    if (limit < result.leaves.last_page) {
+                        let dots = document.createElement('button');
+                        dots.innerText = '...';
+                        dots.className = 'p-2';
+                        dots.disabled = true;
+                        paginationContainer.appendChild(dots);
+                    }
+
+                    paginationContainer.append(nextPageBtn, jumpToLastPageBtn);
+                    // Pagination ends
+
+                } catch (e) {
+                    toastr.error(e);
+                    console.error(e);
+                }
             }
+
+            document.addEventListener('DOMContentLoaded', () => GetEmpLeaves(1));
         </script>
         {{-- /Get Leaves --}}
 

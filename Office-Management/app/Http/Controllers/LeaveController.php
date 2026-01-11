@@ -45,7 +45,10 @@ class LeaveController extends Controller
     public function GetEmpLeaves()
     {
         try {
-            $leaves = Leave::where('user_id', Auth::id())->paginate(20);
+            $leave = Leave::where('user_id', Auth::id())->paginate(20);
+            $leaves = $leave->toArray();
+            $leaves['next'] = $leave->hasMorePages() ? $leave->currentPage() + 1 : null;
+            $leaves['prev'] = $leave->onFirstPage() ? null : $leave->currentPage() - 1;
             return response()->json(['leaves' => $leaves]);
         } catch (Exception $e) {
             Log::info("Error in GetEmpLeaves from LeaveController : " . $e);
