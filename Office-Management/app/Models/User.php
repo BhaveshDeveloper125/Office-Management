@@ -34,6 +34,10 @@ class User extends Authenticatable
         'working',
     ];
 
+    protected $casts = [
+        'joining' => 'date',
+    ];
+
     /**
      * The attributes that should be hidden for serialization.
      *

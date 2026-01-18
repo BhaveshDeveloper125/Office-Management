@@ -18,7 +18,12 @@ class EmployeeHomePageController extends Controller
         try {
             // ------------------------------ Weekend Count ------------------------------//
             $Weekend = WeeklyHoliday::pluck('day')->toArray();
-            $StartOfMonth = Carbon::now()->startOfMonth();
+            if (Auth::user()->joining->isCurrentYear() && Auth::user()->joining->isCurrentMonth()) {
+                $StartOfMonth = Auth::user()->joining;
+                Log::info("Joining Date : " . $StartOfMonth);
+            } else {
+                $StartOfMonth = Carbon::now()->startOfMonth();
+            }
             $EndOfMonth = Carbon::now()->endOfMonth();
 
             $counter = 0;
