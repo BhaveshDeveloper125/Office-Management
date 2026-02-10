@@ -58,6 +58,7 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::post('/after_checkouts', [AttendanceController::class, 'AfterCheckouts'])->name('AfterCheckouts');
     Route::post('/filter_emp_history', [AttendanceController::class, 'FilterHistory']);
     Route::post('/create_leave', [LeaveController::class, 'CreateLeave'])->name('CreateLeave');
+    Route::post('/attendance_data', [EmployeeHomePageController::class, 'GetAttendanceData']);
 
     Route::post('/logout', [Usercontroller::class, 'Logout'])->name('logout');
 
@@ -78,4 +79,5 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::view('/emp_attendance', 'Employee.EmployeeAttendance');
     Route::view('/emp/profile', 'Employee.Profile');
     Route::view('/emp_leave', 'Employee.AskLeave');
+    Route::view('/emp_attendance_data', 'Employee.EmployeeAttendanceData')->name('EmployeeAttendanceData');
 });

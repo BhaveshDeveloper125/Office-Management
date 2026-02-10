@@ -16,49 +16,49 @@
 
         <div class="w-screen flex gap-2 p-2 flex-wrap ">
             <div class="size-40 p-3">
-                <a href="" class="size-full  block">
+                <a href="{{ route('EmployeeAttendanceData') }}" class="size-full  block">
                     <h1>Attendance This Month</h1>
                     <span id="attendance"></span>
                 </a>
             </div>
             <div class="size-40 p-3">
-                <a href="" class="size-full  block">
+                <a href="{{ route('EmployeeAttendanceData') }}" class="size-full  block">
                     <h1>Late This Month</h1>
                     <span id="late"></span>
                 </a>
             </div>
             <div class="size-40 p-3">
-                <a href="" class="size-full  block">
+                <a href="{{ route('EmployeeAttendanceData') }}" class="size-full  block">
                     <h1>Early Leave This Month</h1>
                     <span id="early"></span>
                 </a>
             </div>
             <div class="size-40 p-3">
-                <a href="" class="size-full  block">
+                <a href="{{ route('EmployeeAttendanceData') }}" class="size-full  block">
                     <h1>Absent This Month</h1>
                     <span id="absent"></span>
                 </a>
             </div>
             <div class="size-40 p-3">
-                <a href="" class="size-full  block">
+                <a href="{{ route('EmployeeAttendanceData') }}" class="size-full  block">
                     <h1>OverTime This Month</h1>
                     <span id="overtime"></span>
                 </a>
             </div>
             <div class="size-40 p-3">
-                <a href="" class="size-full  block">
+                <a href="{{ route('EmployeeAttendanceData') }}" class="size-full  block">
                     <h1>Holiday This Month</h1>
                     <span id="holiday"></span>
                 </a>
             </div>
             <div class="size-40 p-3">
-                <a href="" class="size-full  block">
+                <a href="{{ route('EmployeeAttendanceData') }}" class="size-full  block">
                     <h1>Total Working Days of This Month</h1>
                     <span id="workingdays"></span>
                 </a>
             </div>
             <div class="size-40 p-3">
-                <a href="" class="size-full  block">
+                <a href="{{ route('EmployeeAttendanceData') }}" class="size-full  block">
                     <h1>Remaining Working Days of This Month</h1>
                     <span id="remainingworkingdays"></span>
                 </a>

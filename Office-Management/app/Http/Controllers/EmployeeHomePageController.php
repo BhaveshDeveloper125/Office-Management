@@ -20,7 +20,6 @@ class EmployeeHomePageController extends Controller
             $Weekend = WeeklyHoliday::pluck('day')->toArray();
             if (Auth::user()->joining->isCurrentYear() && Auth::user()->joining->isCurrentMonth()) {
                 $StartOfMonth = Auth::user()->joining;
-                Log::info("Joining Date : " . $StartOfMonth);
             } else {
                 $StartOfMonth = Carbon::now()->startOfMonth();
             }
@@ -71,6 +70,43 @@ class EmployeeHomePageController extends Controller
         } catch (Exception $e) {
             Log::info("Error in CurrentMonthWorkingDays from EmployeeHomePageController : " . $e);
             return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function GetAttendanceData(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'attendanceData' => 'required|string|in:attendance,late,early,absent,overtime,holiday',
+            ]);
+
+            switch ($validated['attendanceData']) {
+                case 'attendance':
+                    # code...
+                    break;
+                case 'late':
+                    # code...
+                    break;
+                case 'early':
+                    # code...
+                    break;
+                case 'absent':
+                    # code...
+                    break;
+                case 'overtime':
+                    # code...
+                    break;
+                case 'holiday':
+                    # code...
+                    break;
+                default:
+                    return response()->json(['error' => 'Invalid Attendance Data'], 400);
+            }
+
+            return response()->json(['success' => 'Attendance Data']);
+        } catch (Exception $e) {
+            Log::info("Error in GetAttendanceData from EmployeeHomePageController : " . $e);
+            return response()->json(['error' => $e->getMessage(), 500]);
         }
     }
 }
