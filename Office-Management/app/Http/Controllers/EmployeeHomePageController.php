@@ -76,28 +76,30 @@ class EmployeeHomePageController extends Controller
     public function GetAttendanceData(Request $request)
     {
         try {
-            $validated = $request->validate([
-                'attendanceData' => 'required|string|in:attendance,late,early,absent,overtime,holiday',
-            ]);
-
-            switch ($validated['attendanceData']) {
-                case 'attendance':
-                    # code...
+            switch ($request->path()) {
+                case 'employee_attendance_data':
+                    return response()->json('employee_attendance_data');
                     break;
-                case 'late':
-                    # code...
+                case 'employee_late_data':
+                    return response()->json('employee_late_data');
                     break;
-                case 'early':
-                    # code...
+                case 'employee_early_data':
+                    return response()->json('employee_early_data');
                     break;
-                case 'absent':
-                    # code...
+                case 'employee_absent_data':
+                    return response()->json('employee_absent_data');
                     break;
-                case 'overtime':
-                    # code...
+                case 'employee_overtime_data':
+                    return response()->json('employee_overtime_data');
                     break;
-                case 'holiday':
-                    # code...
+                case 'employee_holiday_data':
+                    return response()->json('employee_holiday_data');
+                    break;
+                case 'employee_workingdays_data':
+                    return response()->json('employee_workingdays_data');
+                    break;
+                case 'employee_remainingworkingdays_data':
+                    return response()->json('employee_remainingworkingdays_data');
                     break;
                 default:
                     return response()->json(['error' => 'Invalid Attendance Data'], 400);

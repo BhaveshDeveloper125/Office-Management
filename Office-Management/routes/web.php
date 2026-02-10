@@ -38,6 +38,14 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::get('/current_month_workin_days', [EmployeeHomePageController::class, 'CurrentMonthWorkingDays']);
     Route::get('/late_checkouts', [AttendanceController::class, 'LateCheckOutList']);
     Route::get('/getempleave', [LeaveController::class, 'GetEmpLeaves'])->name('GetEmpLeaves');
+    Route::get('/employee_attendance_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
+    Route::get('/employee_late_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
+    Route::get('/employee_early_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
+    Route::get('/employee_absent_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
+    Route::get('/employee_overtime_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
+    Route::get('/employee_holiday_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
+    Route::get('/employee_workingdays_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
+    Route::get('/employee_remainingworkingdays_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
 
     Route::get('/edit_employee/{user}', function (User $user) {
         return view('Admin.EditEmployee', ['user' => $user]);
@@ -80,4 +88,11 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::view('/emp/profile', 'Employee.Profile');
     Route::view('/emp_leave', 'Employee.AskLeave');
     Route::view('/emp_attendance_data', 'Employee.EmployeeAttendanceData')->name('EmployeeAttendanceData');
+    Route::view('/emp_late_data', 'Employee.Late')->name('EmployeeLateData');
+    Route::view('/emp_early_data', 'Employee.Early')->name('EmployeeEarlyData');
+    Route::view('/emp_absent_data', 'Employee.Absent')->name('EmployeeAbsentData');
+    Route::view('/emp_overtime_data', 'Employee.Overtime')->name('EmployeeOvertimeData');
+    Route::view('/emp_holiday_data', 'Employee.Holiday')->name('EmployeeHolidayData');
+    Route::view('/emp_workingdays_data', 'Employee.WorkingDay')->name('EmployeeWorkingDaysData');
+    Route::view('/emp_remainingworkingdays_data', 'Employee.RemainingDay')->name('EmployeeRemainingWorkingDaysData');
 });
