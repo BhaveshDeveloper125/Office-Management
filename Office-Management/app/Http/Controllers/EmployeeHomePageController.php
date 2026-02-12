@@ -77,14 +77,15 @@ class EmployeeHomePageController extends Controller
     {
         try {
             switch ($request->path()) {
-                case 'employee_attendance_data':
-                    return response()->json('employee_attendance_data');
-                    break;
                 case 'employee_late_data':
-                    return response()->json('employee_late_data');
+                    $late = Attendance::where('user_id', Auth::user()->id)->whereTime('checkin', '>', Auth::user()->working_from)->orderBy('checkin', 'asc')->paginate(20);
+                    logger($late);
+                    return response()->json(['employee_late_data',$late]);
                     break;
                 case 'employee_early_data':
-                    return response()->json('employee_early_data');
+                    $early = Attendance::where('user_id', Auth::user()->id)->whereTime('checkout', '<', Auth::user()->working_to)->orderBy('checkout', 'asc')->paginate(20);
+                    logger($early);
+                    return response()->json(['employee_early_data',$early]);
                     break;
                 case 'employee_absent_data':
                     return response()->json('employee_absent_data');

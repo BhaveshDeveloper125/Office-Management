@@ -10,7 +10,7 @@
 </head>
 
 <body class="h-screen w-screen flex text-white bg-black">
-    <x-employee-menu />
+    <x-employee-menu /> 
     <div class="flex-1">
         <h1>Employee Attendance Data</h1>
         <x-emp-data-filter />

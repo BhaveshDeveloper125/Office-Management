@@ -84,9 +84,10 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::view('/emp_details', 'Admin.EmployeeDetails');
     Route::view('/manage_holiday', 'Admin.HolidayManagement');
     Route::view('/attendance', 'Employee.Attendance');
-    Route::view('/emp_attendance', 'Employee.EmployeeAttendance');
+    Route::view('/emp_attendance', 'Employee.EmployeeAttendance')->name('EmployeeAttendance');
     Route::view('/emp/profile', 'Employee.Profile');
     Route::view('/emp_leave', 'Employee.AskLeave');
+    
     Route::view('/emp_attendance_data', 'Employee.EmployeeAttendanceData')->name('EmployeeAttendanceData');
     Route::view('/emp_late_data', 'Employee.Late')->name('EmployeeLateData');
     Route::view('/emp_early_data', 'Employee.Early')->name('EmployeeEarlyData');
