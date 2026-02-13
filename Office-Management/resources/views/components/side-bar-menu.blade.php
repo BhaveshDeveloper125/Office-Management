@@ -13,10 +13,10 @@
     <br>
     <a href="">Employee Leave Request</a>
     <br>
-    <a href="">Mark as Overtime/Checkout</a>
-    <br>
-    <a href="">Permissions</a>
-    <br>
+    <!-- <a href="">Mark as Overtime/Checkout</a> -->
+    <!-- <br> -->
+    <!-- <a href="">Permissions</a> -->
+    <!-- <br> -->
     <a>
         <form action="/logout" method="post"
             onsubmit="return confirm(' Are you sure you want to Logout from this system ? ')">
