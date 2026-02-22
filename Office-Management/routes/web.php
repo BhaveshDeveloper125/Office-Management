@@ -48,6 +48,10 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::get('/employee_workingdays_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
     Route::get('/employee_remainingworkingdays_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
     Route::get('/admin_cards_data',[AdminHomePageController::class, 'Cards']);
+    Route::get('/emp_attendances',[AttendanceController::class, 'EmpAttendanceHistory']);
+    Route::get('/admin/leaves/pending',[LeaveController::class, 'GetAllLeaves']);
+    Route::get('/admin/leaves/approved',[LeaveController::class, 'GetAllLeaves']);
+    Route::get('/admin/leaves/rejected',[LeaveController::class, 'GetAllLeaves']);
 
     Route::get('/edit_employee/{user}', function (User $user) {
         return view('Admin.EditEmployee', ['user' => $user]);

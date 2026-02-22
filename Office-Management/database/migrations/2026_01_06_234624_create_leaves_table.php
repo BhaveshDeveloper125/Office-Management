@@ -25,14 +25,9 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        DB::statement("ALTER TABLE leaves
-                              ADD CONSTRAINT duration_type
-                              CHECK (duration_type IN ('half', 'full'))");
-
-        DB::statement("ALTER TABLE leaves
-                              ADD CONSTRAINT leave_type
-                              CHECK (leave_type IN ('casual', 'medical','casual'))");
-
+        DB::statement("ALTER TABLE leaves ADD CONSTRAINT duration_type CHECK (duration_type IN ('half', 'full'))");
+        DB::statement("ALTER TABLE leaves ADD CONSTRAINT leave_type CHECK (leave_type IN ('casual', 'medical','casual'))");
+        DB::statement('ALTER TABLE leaves ADD CONSTRAINT chk_approve CHECK (approve IN (0, 1) OR approve IS NULL)');
     }
 
     /**

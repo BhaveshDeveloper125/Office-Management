@@ -42,6 +42,7 @@ class LeaveController extends Controller
         }
     }
 
+    // Employee leave history and status for the employee page 
     public function GetEmpLeaves()
     {
         try {
@@ -52,6 +53,39 @@ class LeaveController extends Controller
             return response()->json(['leaves' => $leaves]);
         } catch (Exception $e) {
             Log::info("Error in GetEmpLeaves from LeaveController : " . $e);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    // Employee leave history and status for the Admin page 
+    public function GetAllLeaves(Request $request)
+    {
+        try {
+
+            if ($request->is('admin/leaves/approved')) {
+                $leaveApproval = Leave::where('approve', config('LeavesVars.leave_approval.Approved'))->with('user')->paginate(20);
+                $leaveApproved = $leaveApproval->toArray();
+                $leaveApproved['next'] = $leaveApproved['next_page_url'] ? $leaveApproved['current_page'] + 1 : null;
+                $leaveApproved['prev'] = $leaveApproved['prev_page_url'] ? $leaveApproved['current_page'] - 1 : null;
+                return response()->json(['approved' => $leaveApproved]);
+            }else if ($request->is('admin/leaves/rejected')) {
+                $leaveRejection = Leave::where('approve', config('LeavesVars.leave_approval.rejected'))->with('user')->paginate(20);
+                $leaveRejected = $leaveRejection->toArray();
+                $leaveRejected['next'] = $leaveRejected['next_page_url'] ? $leaveRejected['current_page'] + 1 : null;
+                $leaveRejected['prev'] = $leaveRejected['prev_page_url'] ? $leaveRejected['current_page'] - 1 : null;
+                return response()->json(['rejected' => $leaveRejected]);
+            }else if ($request->is('admin/leaves/pending')) {
+                $leavePendings = Leave::where('approve', config('LeavesVars.leave_approval.pending'))->with('user')->paginate(20);
+                $leavePending = $leavePendings->toArray();
+                $leavePending['next'] = $leavePending['next_page_url'] ? $leavePending['current_page'] + 1 : null;
+                $leavePending['prev'] = $leavePending['prev_page_url'] ? $leavePending['current_page'] - 1 : null;
+                return response()->json(['pending' => $leavePending]);
+            }else{
+                return response()->json(['error' => 'Something definietly went wrong'], 404);
+            }
+            
+        } catch (Exception $e) {
+            Log::info("Error in GetAllLeaves from LeaveController : " . $e);
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }

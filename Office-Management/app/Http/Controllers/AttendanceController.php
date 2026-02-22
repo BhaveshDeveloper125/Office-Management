@@ -44,6 +44,17 @@ class AttendanceController extends Controller
         }
     }
 
+    public function EmpAttendanceHistory()
+    {
+        try {
+            $EmpAttendanceHistory = Attendance::orderBy( 'created_at','asc')->paginate(10);
+            return response()->json(['EmpAttendanceHistory' => $EmpAttendanceHistory]);
+        } catch (Exception $e) {
+            logger("Error in EmpAttendanceHistory from AttendanceController : ".$e);
+            return response()->json(['e'=>$e->getMessage()],500);
+        }
+    }
+
     public function LateCheckOutList()
     {
         try {
