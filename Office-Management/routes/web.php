@@ -73,6 +73,7 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::post('/filter_emp_history', [AttendanceController::class, 'FilterHistory']);
     Route::post('/create_leave', [LeaveController::class, 'CreateLeave'])->name('CreateLeave');
     Route::post('/attendance_data', [EmployeeHomePageController::class, 'GetAttendanceData']);
+    Route::post('/admin/leavesaction', [LeaveController::class, 'UpdateLeaveStatus'])->name('UpdateLeaveStatus');
 
     Route::post('/logout', [Usercontroller::class, 'Logout'])->name('logout');
 

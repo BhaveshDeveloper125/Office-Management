@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
@@ -25,12 +26,12 @@
                 <th>Total Days</th>
                 <th>From</th>
                 <th>To</th>
-                <th>Approval Status</th>
+                <th>Approve</th>
             </tr>
             <tbody id="pendingLeaves"></tbody>
         </table>
 
-        <br>><br>
+        <br><br>
 
         <table>
             <h1>Approved Leaves</h1>
@@ -45,7 +46,6 @@
                 <th>Total Days</th>
                 <th>From</th>
                 <th>To</th>
-                <th>Approval Status</th>
             </tr>
             <tbody id="approvedLeaves"></tbody>
         </table>
@@ -65,7 +65,6 @@
                 <th>Total Days</th>
                 <th>From</th>
                 <th>To</th>
-                <th>Approval Status</th>
             </tr>
             <tbody id="rejectedLeaves"></tbody>
         </table>
@@ -79,6 +78,8 @@
                 const response = await fetch('/admin/leaves/pending');
                 const result = await response.json();
                 if (response.ok) {
+
+                    document.getElementById('pendingLeaves').innerHTML = '';
 
                     let data = result.pending.data;
 
@@ -95,7 +96,10 @@
                             <td>${i.total_days}</td>
                             <td>${i.from}</td>
                             <td>${i.to}</td>
-                            <td>${i.approval == null ? 'Pending' : (i.approval ? 'Approved' : 'Rejected')}</td>
+                            <td>
+                                <button onclick="approveLeave(${i.id})" class="bg-green-500 text-white px-2 py-1 rounded">Approve</button>
+                                <button onclick="rejectLeave(${i.id})" class="bg-red-500 text-white px-2 py-1 rounded">Reject</button>
+                            </td>
                         `;
                         document.getElementById('pendingLeaves').appendChild(tr);
                     });
@@ -118,6 +122,8 @@
                 const result = await response.json();
                 if (response.ok) {
                    
+                    document.getElementById('approvedLeaves').innerHTML = '';
+
                     let data = result.approved.data;                    
 
                     data.forEach(i => {
@@ -133,7 +139,6 @@
                             <td>${i.total_days}</td>
                             <td>${i.from}</td>
                             <td>${i.to}</td>
-                            <td>${i.approval == null ? 'Pending' : (i.approval ? 'Approved' : 'Rejected')}</td>
                         `;
                         document.getElementById('approvedLeaves').appendChild(tr);
                     });
@@ -155,6 +160,9 @@
                 const response = await fetch('/admin/leaves/rejected');
                 const result = await response.json();
                 if (response.ok) {
+
+                    document.getElementById('rejectedLeaves').innerHTML = '';
+
                     let data = result.rejected.data;
                     data.forEach(i => {
                         const tr = document.createElement('tr');
@@ -169,7 +177,6 @@
                             <td>${i.total_days}</td>
                             <td>${i.from}</td>
                             <td>${i.to}</td>
-                            <td>${i.approval == null ? 'Pending' : (i.approval ? 'Approved' : 'Rejected')}</td>
                         `;
                         document.getElementById('rejectedLeaves').appendChild(tr);
                     });
@@ -181,6 +188,67 @@
             }    
         }
     </script>
+
+    {{-- Approve/Reject Leave --}}
+
+    <script>
+        async function approveLeave(leaveId) {
+            try {
+                const Form = {
+                    id: leaveId,
+                    approve: 1
+                };
+                const response = await fetch(`/admin/leavesaction`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify(Form)
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    toastr.success(result.success);
+                    GetPendingLeaves();
+                    GetApprovedLeaves();
+                    GetRejectedLeaves();
+                } else {
+                    toastr.error(result.error);
+                }
+            } catch (e) {
+                toastr.error(e);
+                }
+        }
+
+        async function rejectLeave(leaveId) {
+            try {
+                const Form = {
+                    id: leaveId,
+                    approve: 0
+                };
+                const response = await fetch(`/admin/leavesaction`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify(Form)
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    toastr.success(result.success);
+                    GetPendingLeaves();
+                    GetApprovedLeaves();
+                    GetRejectedLeaves();
+                } else {
+                    toastr.error(result.error);
+                }
+            } catch (e) {
+                toastr.error(e);
+            }
+        }
+    </script>
+
 </body>
 
 </html>

@@ -42,6 +42,25 @@ class LeaveController extends Controller
         }
     }
 
+    public function UpdateLeaveStatus(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'id' => 'required|exists:leaves,id',
+                'approve' => 'required|boolean',
+            ]);
+
+            $leave = Leave::find($validated['id']);
+            unset($validated['id']);
+            $leave->update($validated);
+
+            return response()->json(['success' => 'Leave status updated successfully.']);
+        } catch (Exception $e) {
+            Log::info("Error in UpdateLeaveStatus from LeaveController : " . $e);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
     // Employee leave history and status for the employee page 
     public function GetEmpLeaves()
     {
