@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rule;
 
 class AttendanceController extends Controller
 {
@@ -52,6 +51,17 @@ class AttendanceController extends Controller
         } catch (Exception $e) {
             logger("Error in EmpAttendanceHistory from AttendanceController : ".$e);
             return response()->json(['e'=>$e->getMessage()],500);
+        }
+    }
+
+    public function DailyAttendance()
+    {
+        try {
+        $dailyAttendance = Attendance::select('id', 'user_id', 'checkin', 'checkout')->with('user:id,name,email,mobile,post')->orderBy('checkin', 'desc')->paginate(20);
+        return response()->json(['dailyAttendance' => $dailyAttendance]);
+        } catch (Exception $e) {
+            Log::info("Error in DailyAttendance from AttendanceController : " . $e);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 

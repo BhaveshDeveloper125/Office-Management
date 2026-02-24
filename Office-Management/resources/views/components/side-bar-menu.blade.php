@@ -1,17 +1,17 @@
 <nav>
-    <a href="">Dashboard</a>
+    <a href="/">Dashboard</a>
     <br>
-    <a href="">Employee Attendance</a>
+    <a href="/emp_daily_attendance">Employee Attendance</a>
     <br>
     <a href="/emp_details">Employee Details</a>
     <br>
     <a href="/add_emp">Add New Employee</a>
     <br>
-    <a href="/search_emp">Search Employee</a>
+    <a href="/admin/search_emp">Search Employee</a>
     <br>
     <a href="/manage_holiday">Holiday management</a>
     <br>
-    <a href="">Employee Leave Request</a>
+    <a href="/emp_leave_management">Employee Leave Request</a>
     <br>
     <!-- <a href="">Mark as Overtime/Checkout</a> -->
     <!-- <br> -->

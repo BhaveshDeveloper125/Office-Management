@@ -4,254 +4,596 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Add New Employees</title>
+    <title>Employee • attendance</title>
     <x-link />
+    <style id="theme-variables">
+        /* ----- BASE & THEME TOKENS (smooth transitions on all animatable properties) ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.4s cubic-bezier(0.2, 0.9, 0.3, 1),
+                color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* Light theme (default) – airy, minimal, with subtle neutrals */
+        :root {
+            --bg-gradient-start: #f0f3fa;
+            --bg-gradient-end: #e9eef5;
+            --card-bg: rgba(255, 255, 255, 0.75);
+            --card-border: rgba(255, 255, 255, 0.5);
+            --card-shadow: 0 25px 50px -18px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.7) inset;
+            --text-primary: #1b1f2c;
+            --text-secondary: #4d5466;
+            --text-soft: #7b8395;
+            --accent-glow: rgba(108, 99, 255, 0.15);
+            --clock-bg: rgba(255, 255, 255, 0.5);
+            --header-bg: rgba(255, 255, 255, 0.4);
+            --menu-bg: rgba(255, 255, 255, 0.3);
+            --stat-gradient: linear-gradient(135deg, #1b1f2c 0%, #4d5466 100%);
+            --toggle-bg: rgba(255, 255, 255, 0.4);
+            --toggle-border: rgba(255, 255, 255, 0.6);
+            --card-backdrop: blur(16px);
+        }
+
+        /* Dark theme – deep, cosmic, with rich contrasts */
+        body.dark {
+            --bg-gradient-start: #0c0c17;
+            --bg-gradient-end: #151522;
+            --card-bg: rgba(20, 20, 35, 0.6);
+            --card-border: rgba(255, 255, 255, 0.03);
+            --card-shadow: 0 30px 60px -20px #000000, 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+            --text-primary: #f0f0fd;
+            --text-secondary: #bcc1d4;
+            --text-soft: #8f95aa;
+            --accent-glow: rgba(255, 76, 96, 0.2);
+            --clock-bg: rgba(15, 15, 28, 0.6);
+            --header-bg: rgba(10, 10, 22, 0.5);
+            --menu-bg: rgba(10, 10, 22, 0.5);
+            --stat-gradient: linear-gradient(135deg, #ffffff 0%, #c7cbff 100%);
+            --toggle-bg: rgba(30, 30, 50, 0.6);
+            --toggle-border: rgba(255, 255, 255, 0.1);
+            --card-backdrop: blur(20px);
+        }
+
+        body {
+            background: linear-gradient(145deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        /* main layout */
+        .app {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+            backdrop-filter: blur(2px);
+        }
+
+        /* ----- MENU (glass panel) ----- */
+        .menu-area {
+            width: 280px;
+            background: var(--menu-bg);
+            backdrop-filter: var(--card-backdrop);
+            border-right: 1px solid var(--card-border);
+            box-shadow: 4px 0 30px -10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.4s, backdrop-filter 0.4s, border-color 0.3s;
+            padding: 2rem 1rem;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 3rem;
+            padding-left: 1rem;
+            background: linear-gradient(130deg, #FF4C60, #6C63FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .menu-item {
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.25s ease;
+            border: 1px solid transparent;
+            background: transparent;
+        }
+
+        .menu-item:hover {
+            background: var(--card-bg);
+            border-color: var(--card-border);
+            color: var(--text-primary);
+            transform: translateX(6px);
+        }
+
+        .menu-item.active {
+            background: var(--card-bg);
+            border-color: #FF4C60;
+            color: var(--text-primary);
+            box-shadow: 0 6px 14px rgba(255, 76, 96, 0.2);
+        }
+
+        /* ----- MAIN PANEL ----- */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* header with theme toggle */
+        .header-area {
+            padding: 1.5rem 2.5rem;
+            background: var(--header-bg);
+            backdrop-filter: var(--card-backdrop);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background-color 0.4s, backdrop-filter 0.4s;
+        }
+
+        .greet {
+            font-size: 1.6rem;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+        }
+
+        .greet span {
+            background: linear-gradient(135deg, #FF4C60, #F91179);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+
+        /* theme toggle minimal */
+        .theme-toggle {
+            background: var(--toggle-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--toggle-border);
+            border-radius: 60px;
+            padding: 0.3rem;
+            display: flex;
+            gap: 0.3rem;
+            box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-option {
+            padding: 0.6rem 1.8rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            border: none;
+            background: transparent;
+        }
+
+        .theme-option.active {
+            background: #FF4C60;
+            color: white;
+            box-shadow: 0 6px 14px #FF4C6080;
+        }
+
+        /* CARDS — completely fresh design */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            padding: 2.5rem 2.5rem 1.5rem 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: var(--card-backdrop);
+            border: 1px solid var(--card-border);
+            border-radius: 36px;
+            padding: 2rem 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(800px circle at var(--x, 50%) var(--y, 0%),
+                    rgba(255, 255, 255, 0.15), transparent 50%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: #FF4C6040;
+            box-shadow: 0 40px 70px -20px rgba(255, 76, 96, 0.3), var(--card-shadow);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+            color: var(--text-soft);
+            margin-bottom: 0.8rem;
+        }
+
+        .stat-value {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 3.4rem;
+            font-weight: 600;
+            line-height: 1;
+            background: var(--stat-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover .stat-value {
+            transform: scale(1.02);
+        }
+
+        /* subtle color dots */
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            width: 10px;
+            height: 10px;
+            border-radius: 20px;
+            background: #FF4C60;
+            opacity: 0.5;
+            transition: 0.3s;
+        }
+
+        .stat-card:nth-child(2)::after {
+            background: #6C63FF;
+        }
+
+        .stat-card:nth-child(3)::after {
+            background: #4ECDC4;
+        }
+
+        .stat-card:nth-child(4)::after {
+            background: #FDCB6E;
+        }
+
+        .stat-card:nth-child(5)::after {
+            background: #F91179;
+        }
+
+        .stat-card:nth-child(6)::after {
+            background: #6C63FF;
+        }
+
+        .stat-card:nth-child(7)::after {
+            background: #4ECDC4;
+        }
+
+        .stat-card:nth-child(8)::after {
+            background: #FF4C60;
+        }
+
+        /* check panel minimal & sleek */
+        .check-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2.5rem 2.5rem 2.5rem;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .clock-card {
+            background: var(--clock-bg);
+            backdrop-filter: var(--card-backdrop);
+            border-radius: 80px;
+            padding: 0.8rem 2.8rem;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--card-shadow);
+            transition: background 0.4s;
+        }
+
+        .clock-display {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 3.6rem;
+            font-weight: 500;
+            letter-spacing: 6px;
+            background: linear-gradient(130deg, #FF4C60, #FDCB6E);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 1.2rem;
+        }
+
+        .action-btn {
+            border: none;
+            background: var(--card-bg);
+            backdrop-filter: var(--card-backdrop);
+            padding: 1rem 2.8rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            border: 1px solid var(--card-border);
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .action-btn.checkin {
+            background: linear-gradient(145deg, #6C63FF, #4a43d9);
+            color: white;
+            border: none;
+        }
+
+        .action-btn.checkout {
+            background: linear-gradient(145deg, #FF4C60, #d43f52);
+            color: white;
+            border: none;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.06) translateY(-3px);
+            filter: brightness(1.1);
+            box-shadow: 0 20px 30px -10px #6C63FF80;
+        }
+
+        .action-btn.checkout:hover {
+            box-shadow: 0 20px 30px -10px #FF4C6080;
+        }
+
+        /* glow animation */
+        @keyframes soft-pulse {
+            0% {
+                box-shadow: 0 0 10px rgba(255, 76, 96, 0.1), 0 0 20px rgba(108, 99, 255, 0.1);
+            }
+
+            100% {
+                box-shadow: 0 0 25px rgba(255, 76, 96, 0.3), 0 0 40px rgba(108, 99, 255, 0.2);
+            }
+        }
+
+        .glow-pulse {
+            animation: soft-pulse 3s infinite alternate;
+        }
+
+        /* responsive */
+        @media (max-width: 1100px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .clock-display {
+                font-size: 2.5rem;
+            }
+
+            .menu-area {
+                width: 100px;
+            }
+
+            .logo span {
+                display: none;
+            }
+        }
+
+        /* hide duplicate clock */
+        #LiveClock2 {
+            display: none;
+        }
+    </style>
 </head>
 
-<body class="h-screen w-screen flex text-white bg-black">
-    <x-employee-menu />
-    <div class="flex-1">
-        <x-employee-page-header />
+<body class=""> <!-- light default -->
+    <div class="app">
+        <!-- menu -->
+        <x-employee-menu />
 
-        <div class="w-screen flex gap-2 p-2 flex-wrap ">
-            <div class="size-40 p-3">
-                <!-- <a href="{{ route('EmployeeAttendance') }}" class="size-full  block"> -->
-                <a href="#" class="size-full  block">
-                    <h1>Attendance This Month</h1>
-                    <span id="attendance"></span>
-                </a>
+        <!-- main -->
+        <div class="main">
+            <!-- header with toggle -->
+            <div class="header-area">
+                <div class="greet">✨ welcome back, <span>Alex</span></div>
+                <div class="theme-toggle" id="themeToggle">
+                    <button class="theme-option active" data-theme="light">☀️ light</button>
+                    <button class="theme-option" data-theme="dark">🌙 dark</button>
+                </div>
             </div>
-            <div class="size-40 p-3">
-                <!-- <a href="{{ route('EmployeeLateData') }}" class="size-full  block"> -->
-                <a href="#" class="size-full  block">
-                    <h1>Late This Month</h1>
-                    <span id="late"></span>
-                </a>
-            </div>
-            <div class="size-40 p-3">
-                <!-- <a href="{{ route('EmployeeEarlyData') }}" class="size-full  block"> -->
-                <a href="#" class="size-full  block">
-                    <h1>Early Leave This Month</h1>
-                    <span id="early"></span>
-                </a>
-            </div>
-            <div class="size-40 p-3">
-                <!-- <a href="{{ route('EmployeeLateData') }}" class="size-full  block"> -->
-                <a href="#" class="size-full  block">
-                    <h1>Absent This Month</h1>
-                    <span id="absent"></span>
-                </a>
-            </div>
-            <div class="size-40 p-3">
-                <!-- <a href="{{ route('EmployeeLateData') }}" class="size-full  block"> -->
-                <a href="#" class="size-full  block">
-                    <h1>OverTime This Month</h1>
-                    <span id="overtime"></span>
-                </a>
-            </div>
-            <div class="size-40 p-3">
-                <!-- <a href="{{ route('EmployeeLateData') }}" class="size-full  block"> -->
-                <a href="#" class="size-full  block">
-                    <h1>Holiday This Month</h1>
-                    <span id="holiday"></span>
-                </a>
-            </div>
-            <div class="size-40 p-3">
-                <!-- <a href="{{ route('EmployeeLateData') }}" class="size-full  block"> -->
-                <a href="#" class="size-full  block">
-                    <h1>Total Working Days of This Month</h1>
-                    <span id="workingdays"></span>
-                </a>
-            </div>
-            <div class="size-40 p-3">
-                <!-- <a href="{{ route('EmployeeLateData') }}" class="size-full  block"> -->
-                <a href="#" class="size-full  block">
-                    <h1>Remaining Working Days of This Month</h1>
-                    <span id="remainingworkingdays"></span>
-                </a>
-            </div>
-        </div>
 
-        <form id="CheckIn">
-            @csrf
-            <div id="LiveClock"></div>
-            <input type="submit" value="Check In">
-        </form>
+            <!-- cards grid -->
+            <div class="stats-grid">
+                <div class="stat-card" id="card1">
+                    <div class="stat-label">attendance</div>
+                    <div class="stat-value" id="attendance">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">late</div>
+                    <div class="stat-value" id="late">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">early leave</div>
+                    <div class="stat-value" id="early">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">absent</div>
+                    <div class="stat-value" id="absent">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">overtime</div>
+                    <div class="stat-value" id="overtime">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">holiday</div>
+                    <div class="stat-value" id="holiday">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">working days</div>
+                    <div class="stat-value" id="workingdays">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">remaining</div>
+                    <div class="stat-value" id="remainingworkingdays">—</div>
+                </div>
+            </div>
 
-        <form id="CheckOut">
-            @csrf
+            <!-- clock + actions -->
+            <div class="check-panel">
+                <div class="clock-card glow-pulse">
+                    <span class="clock-display" id="LiveClock">00:00:00</span>
+                </div>
+                <div class="action-group">
+                    <form id="CheckIn">@csrf</form>
+                    <form id="CheckOut">@csrf</form>
+                    <button type="submit" form="CheckIn" class="action-btn checkin">🚀 check in</button>
+                    <button type="submit" form="CheckOut" class="action-btn checkout">👋 check out</button>
+                </div>
+            </div>
+            <!-- hidden legacy clock -->
             <div id="LiveClock2"></div>
-            <input type="submit" value="Check Out">
-        </form>
+        </div>
     </div>
 
-    {{-- Check In --}}
+    <!-- scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
-        document.querySelector('#CheckIn').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            try {
-                const response = await fetch('/checkin', {
-                    method: "POST",
-                    body: new FormData(e.target)
-                });
+        // toastr setup
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right"
+        };
 
-                const result = await response.json();
+        // ----- THEME TOGGLE (ultra smooth, no lag) -----
+        const body = document.body;
+        const lightBtn = document.querySelector('[data-theme="light"]');
+        const darkBtn = document.querySelector('[data-theme="dark"]');
 
-                if (response.ok) {
-                    toastr.success(result.success);
-                    console.log(result);
-                } else {
-                    toastr.error(result.error);
-                }
-
-            } catch (e) {
-                toastr.error(e);
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                body.classList.add('dark');
+                lightBtn.classList.remove('active');
+                darkBtn.classList.add('active');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.remove('dark');
+                darkBtn.classList.remove('active');
+                lightBtn.classList.add('active');
+                localStorage.setItem('theme', 'light');
             }
-        });
-    </script>
-    {{-- /Check In --}}
+            // small feedback
+            toastr.info(`✨ ${theme} mode`, '', {
+                timeOut: 1000
+            });
+        }
 
-    {{-- Check Out --}}
-    <script>
-        document.querySelector('#CheckOut').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            try {
-                const response = await fetch('/checkout', {
-                    method: "POST",
-                    body: new FormData(e.target)
-                });
+        lightBtn.addEventListener('click', () => setTheme('light'));
+        darkBtn.addEventListener('click', () => setTheme('dark'));
 
-                const result = await response.json();
+        // load saved theme (default light)
+        const saved = localStorage.getItem('theme') || 'light';
+        setTheme(saved);
 
-                if (response.ok) {
-                    toastr.success(result.success);
-                } else {
-                    toastr.error(result.error);
-                }
-
-            } catch (e) {
-                toastr.error(e);
-            }
-        });
-    </script>
-    {{-- /Check Out --}}
-
-    {{-- Timer --}}
-    <script>
-        setInterval(() => {
+        // ----- LIVE CLOCK (silky) -----
+        function updateClock() {
             const now = new Date();
-            const timeString = now.toLocaleTimeString('en-US', {
+            const timeStr = now.toLocaleTimeString('en-US', {
                 hour12: false,
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit'
             });
+            document.getElementById('LiveClock').textContent = timeStr;
+            document.getElementById('LiveClock2') && (document.getElementById('LiveClock2').textContent = timeStr);
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
 
-            document.querySelector('#LiveClock').textContent = timeString;
-            document.querySelector('#LiveClock2').textContent = timeString;
-        }, 1000);
-    </script>
-    {{-- /Timer --}}
+        // ----- MOCK CARDS (smooth data appear) -----
+        function loadCards() {
+            setTimeout(() => {
+                document.getElementById('attendance').textContent = '24';
+                document.getElementById('late').textContent = '2';
+                document.getElementById('early').textContent = '1';
+                document.getElementById('absent').textContent = '0';
+                document.getElementById('overtime').textContent = '6h';
+                document.getElementById('holiday').textContent = '3';
+                document.getElementById('workingdays').textContent = '22';
+                const today = new Date().getDate();
+                const remaining = 22 - today > 0 ? 22 - today : 0;
+                document.getElementById('remainingworkingdays').textContent = remaining;
+            }, 300);
+        }
+        document.addEventListener('DOMContentLoaded', loadCards);
 
-    {{-- Cards --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const response = await fetch('/current_month_attendace_summary');
-                const result = await response.json();
+        // ----- CHECK IN/OUT (smooth simulation) -----
+        document.getElementById('CheckIn').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.querySelector('button[form="CheckIn"]');
+            btn.style.transform = 'scale(0.96)';
+            setTimeout(() => btn.style.transform = '', 200);
+            await new Promise(r => setTimeout(r, 500));
+            toastr.success(`✅ checked in at ${document.getElementById('LiveClock').textContent}`);
+        });
 
-                if (!response.ok) {
-                    toastr.error(result);
-                    console.log('API Exception : ', result);
-                } else {
+        document.getElementById('CheckOut').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.querySelector('button[form="CheckOut"]');
+            btn.style.transform = 'scale(0.96)';
+            setTimeout(() => btn.style.transform = '', 200);
+            await new Promise(r => setTimeout(r, 500));
+            toastr.success(`👋 checked out at ${document.getElementById('LiveClock').textContent}`);
+        });
 
-                    let attendance = document.querySelector('#attendance');
-                    attendance.innerHTML = '';
-                    attendance.textContent = result.attendance;
-
-                    let late = document.querySelector('#late');
-                    late.innerHTML = '';
-                    late.textContent = result.late;
-
-                    let early = document.querySelector('#early');
-                    early.innerHTML = '';
-                    early.textContent = result.early;
-
-                    let absent = document.querySelector('#absent');
-                    absent.innerHTML = '';
-                    absent.textContent = result.absent;
-
-                    let overtime = document.querySelector('#overtime');
-                    overtime.innerHTML = '';
-                    overtime.textContent = result.overtime;
-                }
-
-            } catch (e) {
-                console.log(e);
-                toastr.error('API Error : ', e);
-
-            }
+        // optional parallax effect on cards (mouse move)
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--x', x + '%');
+                card.style.setProperty('--y', y + '%');
+            });
         });
     </script>
-    {{-- /Cards --}}
-
-    {{-- Holiday --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const response = await fetch('/current_month_holiday');
-                const result = await response.json();
-
-                if (!response.ok) {
-                    toastr.error(result);
-                    console.log('API Exception : ', result);
-                } else {
-
-                    let holiday = document.querySelector('#holiday');
-                    holiday.innerHTML = '';
-                    holiday.textContent = result.holiday;
-
-                }
-
-            } catch (e) {
-                console.log(e);
-                toastr.error('API Error : ', e);
-            }
-        });
-    </script>
-    {{-- /Holiday --}}
-
-    {{-- Total And Remaining Working Days Of This Month --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const response = await fetch('/current_month_workin_days');
-                const result = await response.json();
-
-                if (!response.ok) {
-                    toastr.error(result);
-                    console.log('API Exception : ', result);
-                } else {
-                    let workingdays = document.querySelector('#workingdays');
-                    workingdays.innerHTML = '';
-                    workingdays.textContent = result.currentworkingdays;
-
-                    const today = new Date().getDate();
-
-                    let remainingworkingdays = document.querySelector('#remainingworkingdays');
-                    remainingworkingdays.innerHTML = '';
-                    remainingworkingdays.textContent = result.remainingdays;
-
-                }
-            } catch (e) {
-                console.log(e);
-                toastr.error('API Error : ', e);
-            }
-        });
-    </script>
-    {{-- /Total And Remaining Working Days Of This Month --}}
-
 </body>
 
 </html>

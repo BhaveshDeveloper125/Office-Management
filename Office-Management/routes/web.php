@@ -52,6 +52,8 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::get('/admin/leaves/pending',[LeaveController::class, 'GetAllLeaves']);
     Route::get('/admin/leaves/approved',[LeaveController::class, 'GetAllLeaves']);
     Route::get('/admin/leaves/rejected',[LeaveController::class, 'GetAllLeaves']);
+    Route::get('/admin/leaves/history',[LeaveController::class, 'GetAllLeaves']);
+    Route::get('/admin/daily_attendance',[AttendanceController::class, 'DailyAttendance']);
 
     Route::get('/edit_employee/{user}', function (User $user) {
         return view('Admin.EditEmployee', ['user' => $user]);
@@ -103,4 +105,7 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::view('/emp_holiday_data', 'Employee.Holiday')->name('EmployeeHolidayData');
     Route::view('/emp_workingdays_data', 'Employee.WorkingDay')->name('EmployeeWorkingDaysData');
     Route::view('/emp_remainingworkingdays_data', 'Employee.RemainingDay')->name('EmployeeRemainingWorkingDaysData');
+    Route::view('/emp_leave_management', 'Admin.LeaveManagement')->name('EmployeeLeaveHistory');
+    Route::view('/emp_daily_attendance', 'Admin.EmployeeDailyAttendance')->name('EmployeeDailyAttendance');
+    Route::view('/admin/search_emp', 'Admin.SearchEmployee')->name('AdminSearchEmployee');
 });

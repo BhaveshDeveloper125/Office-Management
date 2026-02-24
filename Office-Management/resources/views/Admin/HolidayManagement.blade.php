@@ -8,7 +8,7 @@
     <x-link />
 </head>
 
-<body class="h-screen w-screen flex">
+<body class="h-screen w-screen flex bg-black text-white">
     <x-side-bar-menu />
     <div class="flex-1">
         <form id="WeekendHolidayForm">
