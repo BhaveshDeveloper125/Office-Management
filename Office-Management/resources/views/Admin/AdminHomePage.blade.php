@@ -7,215 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Admin • Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <x-link />
 
     <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-        /* ── TOKENS ── */
-        :root {
-            --bg-gradient-start: #f0f3fa;
-            --bg-gradient-end:   #e9eef5;
-            --card-bg:           rgba(255,255,255,0.75);
-            --card-border:       rgba(255,255,255,0.5);
-            --card-shadow:       0 25px 50px -18px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.7) inset;
-            --text-primary:      #1b1f2c;
-            --text-secondary:    #4d5466;
-            --text-soft:         #7b8395;
-            --header-bg:         rgba(255,255,255,0.4);
-            --menu-bg:           rgba(255,255,255,0.3);
-            --toggle-bg:         rgba(255,255,255,0.4);
-            --toggle-border:     rgba(255,255,255,0.6);
-            --card-backdrop:     blur(16px);
-            --stat-gradient:     linear-gradient(135deg, #1b1f2c 0%, #4d5466 100%);
-        }
-
-        body.dark {
-            --bg-gradient-start: #0c0c17;
-            --bg-gradient-end:   #151522;
-            --card-bg:           rgba(20,20,35,0.6);
-            --card-border:       rgba(255,255,255,0.03);
-            --card-shadow:       0 30px 60px -20px #000, 0 0 0 1px rgba(255,255,255,0.02) inset;
-            --text-primary:      #f0f0fd;
-            --text-secondary:    #bcc1d4;
-            --text-soft:         #8f95aa;
-            --header-bg:         rgba(10,10,22,0.5);
-            --menu-bg:           rgba(10,10,22,0.5);
-            --toggle-bg:         rgba(30,30,50,0.6);
-            --toggle-border:     rgba(255,255,255,0.1);
-            --card-backdrop:     blur(20px);
-            --stat-gradient:     linear-gradient(135deg, #ffffff 0%, #c7cbff 100%);
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(145deg, var(--bg-gradient-start), var(--bg-gradient-end));
-            min-height: 100vh;
-            color: var(--text-primary);
-            transition: background-color 0.4s cubic-bezier(0.2,0.9,0.3,1), color 0.3s ease;
-            overflow-x: hidden;
-        }
-
-        /* ── SHELL ── */
-        .app { display: flex; min-height: 100vh; }
-
-        /* ── SIDEBAR ── */
-        .menu-area {
-            width: 280px;
-            flex-shrink: 0;
-            background: var(--menu-bg);
-            backdrop-filter: var(--card-backdrop);
-            border-right: 1px solid var(--card-border);
-            box-shadow: 4px 0 30px -10px rgba(0,0,0,0.1);
-            padding: 2rem 1rem;
-            transition: background 0.4s, border-color 0.3s;
-        }
-
-        .logo {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 2rem;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            margin-bottom: 3rem;
-            padding-left: 1rem;
-            background: linear-gradient(130deg, #FF4C60, #6C63FF);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .menu-items { display: flex; flex-direction: column; gap: 0.8rem; }
-
-        .menu-item {
-            padding: 1rem 1.5rem;
-            border-radius: 20px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            transition: all 0.25s ease;
-            border: 1px solid transparent;
-            cursor: pointer;
-            text-decoration: none;
-            display: block;
-        }
-
-        .menu-item:hover {
-            background: var(--card-bg);
-            border-color: var(--card-border);
-            color: var(--text-primary);
-            transform: translateX(6px);
-        }
-
-        .menu-item.active {
-            background: var(--card-bg);
-            border-color: #FF4C60;
-            color: var(--text-primary);
-            box-shadow: 0 6px 14px rgba(255,76,96,0.2);
-        }
-
-        /* ── MAIN ── */
-        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-
-        /* ── HEADER ── */
-        .header-area {
-            padding: 1.5rem 2.5rem;
-            background: var(--header-bg);
-            backdrop-filter: var(--card-backdrop);
-            border-bottom: 1px solid var(--card-border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: background 0.4s;
-        }
-
-        .page-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.6rem;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-        }
-
-        .page-title span {
-            background: linear-gradient(135deg, #FF4C60, #F91179);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* header right: clock + toggle */
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 1.2rem;
-        }
-
-        .clock-pill {
-            background: var(--toggle-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--toggle-border);
-            border-radius: 80px;
-            padding: 0.45rem 1.4rem;
-            font-family: 'Space Grotesk', monospace;
-            font-size: 1rem;
-            font-weight: 500;
-            letter-spacing: 2px;
-            background-clip: text;
-            -webkit-background-clip: unset;
-            color: var(--text-secondary);
-            transition: all 0.3s;
-        }
-
-        .theme-toggle {
-            background: var(--toggle-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--toggle-border);
-            border-radius: 60px;
-            padding: 0.3rem;
-            display: flex;
-            gap: 0.3rem;
-        }
-
-        .theme-option {
-            padding: 0.6rem 1.8rem;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            color: var(--text-secondary);
-            transition: all 0.3s ease;
-            border: none;
-            background: transparent;
-        }
-
-        .theme-option.active {
-            background: #FF4C60;
-            color: white;
-            box-shadow: 0 6px 14px #FF4C6080;
-        }
-
-        /* ── CONTENT ── */
-        .content { padding: 2.5rem; overflow-y: auto; }
-
-        /* ── SECTION LABEL ── */
-        .section-header {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-soft);
-            letter-spacing: 0.5px;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
-
-        .section-header::before {
-            content: '';
-            display: inline-block;
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #FF4C60, #F91179);
-        }
+        /* ── STATS GRID ── */
 
         /* ── STATS GRID ── */
         .stats-grid {
@@ -333,12 +128,12 @@
 
         <!-- header -->
         <div class="header-area">
-            <div class="page-title">📊 Admin <span>Dashboard</span></div>
+            <div class="page-title"><i class="fa-solid fa-chart-bar" style="color:#6C63FF;"></i> Admin <span>Dashboard</span></div>
             <div class="header-right">
                 <div class="clock-pill" id="liveClock">00:00:00</div>
                 <div class="theme-toggle">
-                    <button class="theme-option active" data-theme="light">☀️ light</button>
-                    <button class="theme-option" data-theme="dark">🌙 dark</button>
+                    <button class="theme-option active" data-theme="light"><i class="fa-solid fa-sun" style="color:#FDCB6E;"></i> light</button>
+                    <button class="theme-option" data-theme="dark"><i class="fa-solid fa-moon" style="color:#6C63FF;"></i> dark</button>
                 </div>
             </div>
         </div>
@@ -403,8 +198,7 @@
     </div><!-- /main -->
 </div><!-- /app -->
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 <script>
     /* ── TOASTR ── */
     toastr.options = { closeButton: true, progressBar: true, positionClass: 'toast-bottom-right' };
@@ -413,17 +207,17 @@
     const lightBtn = document.querySelector('[data-theme="light"]');
     const darkBtn  = document.querySelector('[data-theme="dark"]');
 
-    function setTheme(theme) {
+    function setTheme(theme, notify = true) {
         document.body.classList.toggle('dark', theme === 'dark');
         lightBtn.classList.toggle('active', theme === 'light');
         darkBtn.classList.toggle('active',  theme === 'dark');
         localStorage.setItem('theme', theme);
-        toastr.info(`✨ ${theme} mode`, '', { timeOut: 900 });
+        if (notify) toastr.info(`${theme} mode`, '', { timeOut: 900 });
     }
 
     lightBtn.addEventListener('click', () => setTheme('light'));
     darkBtn.addEventListener('click',  () => setTheme('dark'));
-    setTheme(localStorage.getItem('theme') || 'light');
+    setTheme(localStorage.getItem('theme') || 'light', false);
 
     /* ── LIVE CLOCK ── */
     function updateClock() {

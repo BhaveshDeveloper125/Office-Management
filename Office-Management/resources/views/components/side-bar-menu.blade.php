@@ -2,22 +2,22 @@
 <div class="menu-area">
     {{-- <div class="logo">attnd.</div> --}}
     <div class="menu-items">
-        <a class="menu-item active" href="/">📊 Dashboard</a>
-        <a class="menu-item" href="/emp_daily_attendance">🗓 Attendance</a>
-        <a class="menu-item" href="/emp_details">👥 Employees</a>
-        <a class="menu-item" href="/add_emp">Add New Employee</a>
-        <a class="menu-item" href="/admin/search_emp">Search Employee</a>
-        <a class="menu-item" href="/manage_holiday">🎉 Holidays</a>
-        <a class="menu-item" href="/emp_leave_management">🌿 Leaves</a>
-        {{-- <a class="menu-item" href="/emp_overtime_checkout">⏱ Overtime</a> --}}
-        {{-- <a class="menu-item" href="/settings">⚙️ Settings</a> --}}
-        <a>
-            <form action="/logout" method="post"
-                onsubmit="return confirm(' Are you sure you want to Logout from this system ? ')">
-                @csrf
-                <input type="submit" value="Logout">
-            </form>
-        </a>
+        <a class="menu-item {{ request()->path() === 'admin' ? 'active' : '' }}" href="/"><i class="fa-solid fa-chart-bar" style="color:#6C63FF;width:18px;"></i> Dashboard</a>
+        <a class="menu-item {{ request()->is('emp_daily_attendance') ? 'active' : '' }}" href="/emp_daily_attendance"><i class="fa-solid fa-calendar-days" style="color:#4ECDC4;width:18px;"></i> Attendance</a>
+        <a class="menu-item {{ request()->is('emp_details') ? 'active' : '' }}" href="/emp_details"><i class="fa-solid fa-users" style="color:#FDCB6E;width:18px;"></i> Employees</a>
+        <a class="menu-item {{ request()->is('add_emp') ? 'active' : '' }}" href="/add_emp"><i class="fa-solid fa-user-plus" style="color:#4ECDC4;width:18px;"></i> Add New Employee</a>
+        <a class="menu-item {{ request()->is('admin/search_emp') ? 'active' : '' }}" href="/admin/search_emp"><i class="fa-solid fa-magnifying-glass" style="color:#6C63FF;width:18px;"></i> Search Employee</a>
+        <a class="menu-item {{ request()->is('manage_holiday') ? 'active' : '' }}" href="/manage_holiday"><i class="fa-solid fa-umbrella-beach" style="color:#FF4C60;width:18px;"></i> Holidays</a>
+        <a class="menu-item {{ request()->is('emp_leave_management') ? 'active' : '' }}" href="/emp_leave_management"><i class="fa-solid fa-calendar-minus" style="color:#2ecc71;width:18px;"></i> Leaves</a>
+        {{-- <a class="menu-item" href="/emp_overtime_checkout"><i class="fa-solid fa-clock" style="color:#FDCB6E;width:18px;"></i> Overtime</a> --}}
+        {{-- <a class="menu-item" href="/settings"><i class="fa-solid fa-gear" style="color:#7b8395;width:18px;"></i> Settings</a> --}}
+        <form action="/logout" method="post"
+            onsubmit="return confirm(' Are you sure you want to Logout from this system ? ')">
+            @csrf
+            <button type="submit" class="menu-item" style="border: none; background: transparent; width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer;">
+                <i class="fa-solid fa-right-from-bracket" style="color:#FF4C60;width:18px;"></i> Logout
+            </button>
+        </form>
     </div>
 </div>
 

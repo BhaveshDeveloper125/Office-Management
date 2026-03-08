@@ -7,189 +7,6 @@
     <title>Employee • attendance</title>
     <x-link />
     <style id="theme-variables">
-        /* ----- BASE & THEME TOKENS (smooth transitions on all animatable properties) ----- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            transition: background-color 0.4s cubic-bezier(0.2, 0.9, 0.3, 1),
-                color 0.3s ease;
-            overflow-x: hidden;
-        }
-
-        /* Light theme (default) – airy, minimal, with subtle neutrals */
-        :root {
-            --bg-gradient-start: #f0f3fa;
-            --bg-gradient-end: #e9eef5;
-            --card-bg: rgba(255, 255, 255, 0.75);
-            --card-border: rgba(255, 255, 255, 0.5);
-            --card-shadow: 0 25px 50px -18px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.7) inset;
-            --text-primary: #1b1f2c;
-            --text-secondary: #4d5466;
-            --text-soft: #7b8395;
-            --accent-glow: rgba(108, 99, 255, 0.15);
-            --clock-bg: rgba(255, 255, 255, 0.5);
-            --header-bg: rgba(255, 255, 255, 0.4);
-            --menu-bg: rgba(255, 255, 255, 0.3);
-            --stat-gradient: linear-gradient(135deg, #1b1f2c 0%, #4d5466 100%);
-            --toggle-bg: rgba(255, 255, 255, 0.4);
-            --toggle-border: rgba(255, 255, 255, 0.6);
-            --card-backdrop: blur(16px);
-        }
-
-        /* Dark theme – deep, cosmic, with rich contrasts */
-        body.dark {
-            --bg-gradient-start: #0c0c17;
-            --bg-gradient-end: #151522;
-            --card-bg: rgba(20, 20, 35, 0.6);
-            --card-border: rgba(255, 255, 255, 0.03);
-            --card-shadow: 0 30px 60px -20px #000000, 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
-            --text-primary: #f0f0fd;
-            --text-secondary: #bcc1d4;
-            --text-soft: #8f95aa;
-            --accent-glow: rgba(255, 76, 96, 0.2);
-            --clock-bg: rgba(15, 15, 28, 0.6);
-            --header-bg: rgba(10, 10, 22, 0.5);
-            --menu-bg: rgba(10, 10, 22, 0.5);
-            --stat-gradient: linear-gradient(135deg, #ffffff 0%, #c7cbff 100%);
-            --toggle-bg: rgba(30, 30, 50, 0.6);
-            --toggle-border: rgba(255, 255, 255, 0.1);
-            --card-backdrop: blur(20px);
-        }
-
-        body {
-            background: linear-gradient(145deg, var(--bg-gradient-start), var(--bg-gradient-end));
-            min-height: 100vh;
-            color: var(--text-primary);
-        }
-
-        /* main layout */
-        .app {
-            display: flex;
-            min-height: 100vh;
-            width: 100%;
-            backdrop-filter: blur(2px);
-        }
-
-        /* ----- MENU (glass panel) ----- */
-        .menu-area {
-            width: 280px;
-            background: var(--menu-bg);
-            backdrop-filter: var(--card-backdrop);
-            border-right: 1px solid var(--card-border);
-            box-shadow: 4px 0 30px -10px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.4s, backdrop-filter 0.4s, border-color 0.3s;
-            padding: 2rem 1rem;
-        }
-
-        .logo {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 2rem;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            margin-bottom: 3rem;
-            padding-left: 1rem;
-            background: linear-gradient(130deg, #FF4C60, #6C63FF);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .menu-items {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-
-        .menu-item {
-            padding: 1rem 1.5rem;
-            border-radius: 20px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            transition: all 0.25s ease;
-            border: 1px solid transparent;
-            background: transparent;
-        }
-
-        .menu-item:hover {
-            background: var(--card-bg);
-            border-color: var(--card-border);
-            color: var(--text-primary);
-            transform: translateX(6px);
-        }
-
-        .menu-item.active {
-            background: var(--card-bg);
-            border-color: #FF4C60;
-            color: var(--text-primary);
-            box-shadow: 0 6px 14px rgba(255, 76, 96, 0.2);
-        }
-
-        /* ----- MAIN PANEL ----- */
-        .main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* header with theme toggle */
-        .header-area {
-            padding: 1.5rem 2.5rem;
-            background: var(--header-bg);
-            backdrop-filter: var(--card-backdrop);
-            border-bottom: 1px solid var(--card-border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: background-color 0.4s, backdrop-filter 0.4s;
-        }
-
-        .greet {
-            font-size: 1.6rem;
-            font-weight: 400;
-            letter-spacing: -0.02em;
-        }
-
-        .greet span {
-            background: linear-gradient(135deg, #FF4C60, #F91179);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 600;
-        }
-
-        /* theme toggle minimal */
-        .theme-toggle {
-            background: var(--toggle-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--toggle-border);
-            border-radius: 60px;
-            padding: 0.3rem;
-            display: flex;
-            gap: 0.3rem;
-            box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.2);
-        }
-
-        .theme-option {
-            padding: 0.6rem 1.8rem;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            color: var(--text-secondary);
-            transition: all 0.3s ease;
-            border: none;
-            background: transparent;
-        }
-
-        .theme-option.active {
-            background: #FF4C60;
-            color: white;
-            box-shadow: 0 6px 14px #FF4C6080;
-        }
-
         /* CARDS — completely fresh design */
         .stats-grid {
             display: grid;
@@ -431,10 +248,10 @@
         <div class="main">
             <!-- header with toggle -->
             <div class="header-area">
-                <div class="greet">✨ welcome back, <span>Alex</span></div>
+                <div class="greet"><i class="fa-solid fa-star" style="color:#FDCB6E;"></i> welcome back, <span>Alex</span></div>
                 <div class="theme-toggle" id="themeToggle">
-                    <button class="theme-option active" data-theme="light">☀️ light</button>
-                    <button class="theme-option" data-theme="dark">🌙 dark</button>
+                    <button class="theme-option active" data-theme="light"><i class="fa-solid fa-sun" style="color:#FDCB6E;"></i> light</button>
+                    <button class="theme-option" data-theme="dark"><i class="fa-solid fa-moon" style="color:#6C63FF;"></i> dark</button>
                 </div>
             </div>
 
@@ -483,7 +300,7 @@
                     <form id="CheckIn">@csrf</form>
                     <form id="CheckOut">@csrf</form>
                     <button type="submit" form="CheckIn" class="action-btn checkin">🚀 check in</button>
-                    <button type="submit" form="CheckOut" class="action-btn checkout">👋 check out</button>
+                    <button type="submit" form="CheckOut" class="action-btn checkout"><i class="fa-solid fa-right-from-bracket" style="color:#fff;"></i> check out</button>
                 </div>
             </div>
             <!-- hidden legacy clock -->
@@ -492,8 +309,6 @@
     </div>
 
     <!-- scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         // toastr setup
         toastr.options = {
@@ -507,7 +322,7 @@
         const lightBtn = document.querySelector('[data-theme="light"]');
         const darkBtn = document.querySelector('[data-theme="dark"]');
 
-        function setTheme(theme) {
+        function setTheme(theme, notify = true) {
             if (theme === 'dark') {
                 body.classList.add('dark');
                 lightBtn.classList.remove('active');
@@ -519,8 +334,8 @@
                 lightBtn.classList.add('active');
                 localStorage.setItem('theme', 'light');
             }
-            // small feedback
-            toastr.info(`✨ ${theme} mode`, '', {
+            // small feedback – only when user explicitly toggles
+            if (notify) toastr.info(`${theme} mode`, '', {
                 timeOut: 1000
             });
         }
@@ -528,9 +343,9 @@
         lightBtn.addEventListener('click', () => setTheme('light'));
         darkBtn.addEventListener('click', () => setTheme('dark'));
 
-        // load saved theme (default light)
+        // load saved theme (default light) – no toast on page load
         const saved = localStorage.getItem('theme') || 'light';
-        setTheme(saved);
+        setTheme(saved, false);
 
         // ----- LIVE CLOCK (silky) -----
         function updateClock() {
@@ -571,7 +386,7 @@
             btn.style.transform = 'scale(0.96)';
             setTimeout(() => btn.style.transform = '', 200);
             await new Promise(r => setTimeout(r, 500));
-            toastr.success(`✅ checked in at ${document.getElementById('LiveClock').textContent}`);
+            toastr.success(`Checked in at ${document.getElementById('LiveClock').textContent}`);
         });
 
         document.getElementById('CheckOut').addEventListener('submit', async (e) => {
@@ -580,7 +395,7 @@
             btn.style.transform = 'scale(0.96)';
             setTimeout(() => btn.style.transform = '', 200);
             await new Promise(r => setTimeout(r, 500));
-            toastr.success(`👋 checked out at ${document.getElementById('LiveClock').textContent}`);
+            toastr.success(`Checked out at ${document.getElementById('LiveClock').textContent}`);
         });
 
         // optional parallax effect on cards (mouse move)

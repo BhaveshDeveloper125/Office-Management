@@ -6,10 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Login</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <x-link />
 
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -240,6 +237,25 @@
             box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
         }
 
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        #togglePassword {
+            position: absolute;
+            right: 1.2rem;
+            cursor: pointer;
+            color: var(--text-soft);
+            transition: color 0.2s ease;
+            font-size: 1.1rem;
+        }
+
+        #togglePassword:hover {
+            color: var(--text-primary);
+        }
+
         /* ── SUBMIT BTN ── */
         .login-btn {
             width: 100%;
@@ -305,8 +321,8 @@
 
     <!-- theme toggle -->
     <div class="theme-toggle">
-        <button class="theme-option active" data-theme="light">☀️ light</button>
-        <button class="theme-option" data-theme="dark">🌙 dark</button>
+        <button class="theme-option active" data-theme="light"><i class="fa-solid fa-sun" style="color:#FDCB6E;"></i> light</button>
+        <button class="theme-option" data-theme="dark"><i class="fa-solid fa-moon" style="color:#6C63FF;"></i> dark</button>
     </div>
 
     <!-- login card -->
@@ -341,15 +357,18 @@
 
                 <div class="field">
                     <label class="field-label" for="password">Password</label>
-                    <input
-                        class="field-input"
-                        type="password"
-                        name="password"
-                        id="password"
-                        placeholder="••••••••••"
-                        required
-                        autocomplete="current-password"
-                    >
+                    <div class="password-wrapper">
+                        <input
+                            class="field-input"
+                            type="password"
+                            name="password"
+                            id="password"
+                            placeholder="••••••••••"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <i class="fa-solid fa-eye" id="togglePassword"></i>
+                    </div>
                 </div>
 
                 <button type="submit" class="login-btn" id="loginBtn">→ Sign In</button>
@@ -366,8 +385,7 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     <script>
         /* ── TOASTR ── */
         toastr.options = { closeButton: true, progressBar: true, positionClass: 'toast-bottom-right' };
@@ -400,6 +418,17 @@
         loginBtn.addEventListener('click', function () {
             this.style.transform = 'scale(0.96)';
             setTimeout(() => this.style.transform = '', 200);
+        });
+
+        /* ── TOGGLE PASSWORD VISIBILITY ── */
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function () {
+            const isPassword = passwordInput.getAttribute('type') === 'password';
+            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
         });
 
         /* ── SHOW VALIDATION ERRORS AS TOASTS ── */
