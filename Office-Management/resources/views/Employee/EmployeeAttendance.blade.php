@@ -6,287 +6,730 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Attendance</title>
-    <x-link />
+    <title>Attendance • History</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <style>
+        /* ── RESET ── */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ── THEME TOKENS ── */
+        :root {
+            --bg-gradient-start: #f0f3fa;
+            --bg-gradient-end:   #e9eef5;
+            --card-bg:           rgba(255,255,255,0.75);
+            --card-border:       rgba(255,255,255,0.5);
+            --card-shadow:       0 25px 50px -18px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.7) inset;
+            --text-primary:      #1b1f2c;
+            --text-secondary:    #4d5466;
+            --text-soft:         #7b8395;
+            --header-bg:         rgba(255,255,255,0.4);
+            --menu-bg:           rgba(255,255,255,0.3);
+            --toggle-bg:         rgba(255,255,255,0.4);
+            --toggle-border:     rgba(255,255,255,0.6);
+            --card-backdrop:     blur(16px);
+            --table-row-hover:   rgba(108,99,255,0.04);
+            --input-bg:          rgba(255,255,255,0.6);
+            --input-border:      rgba(200,205,220,0.6);
+        }
+
+        body.dark {
+            --bg-gradient-start: #0c0c17;
+            --bg-gradient-end:   #151522;
+            --card-bg:           rgba(20,20,35,0.6);
+            --card-border:       rgba(255,255,255,0.03);
+            --card-shadow:       0 30px 60px -20px #000, 0 0 0 1px rgba(255,255,255,0.02) inset;
+            --text-primary:      #f0f0fd;
+            --text-secondary:    #bcc1d4;
+            --text-soft:         #8f95aa;
+            --header-bg:         rgba(10,10,22,0.5);
+            --menu-bg:           rgba(10,10,22,0.5);
+            --toggle-bg:         rgba(30,30,50,0.6);
+            --toggle-border:     rgba(255,255,255,0.1);
+            --card-backdrop:     blur(20px);
+            --table-row-hover:   rgba(108,99,255,0.08);
+            --input-bg:          rgba(20,20,40,0.6);
+            --input-border:      rgba(255,255,255,0.08);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: background-color 0.4s cubic-bezier(0.2,0.9,0.3,1), color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* ── APP SHELL ── */
+        .app { display: flex; min-height: 100vh; }
+
+        /* ── SIDEBAR ── */
+        .menu-area {
+            width: 280px;
+            background: var(--menu-bg);
+            backdrop-filter: var(--card-backdrop);
+            border-right: 1px solid var(--card-border);
+            box-shadow: 4px 0 30px -10px rgba(0,0,0,0.1);
+            padding: 2rem 1rem;
+            transition: background 0.4s, border-color 0.3s;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 3rem;
+            padding-left: 1rem;
+            background: linear-gradient(130deg, #FF4C60, #6C63FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-items { display: flex; flex-direction: column; gap: 0.8rem; }
+
+        .menu-item {
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.25s ease;
+            border: 1px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+
+        .menu-item:hover {
+            background: var(--card-bg);
+            border-color: var(--card-border);
+            color: var(--text-primary);
+            transform: translateX(6px);
+        }
+
+        .menu-item.active {
+            background: var(--card-bg);
+            border-color: #FF4C60;
+            color: var(--text-primary);
+            box-shadow: 0 6px 14px rgba(255,76,96,0.2);
+        }
+
+        /* ── MAIN ── */
+        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* ── HEADER ── */
+        .header-area {
+            padding: 1.5rem 2.5rem;
+            background: var(--header-bg);
+            backdrop-filter: var(--card-backdrop);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.4s;
+        }
+
+        .page-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .page-title span {
+            background: linear-gradient(135deg, #FF4C60, #F91179);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* theme toggle */
+        .theme-toggle {
+            background: var(--toggle-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--toggle-border);
+            border-radius: 60px;
+            padding: 0.3rem;
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .theme-option {
+            padding: 0.6rem 1.8rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            border: none;
+            background: transparent;
+        }
+
+        .theme-option.active {
+            background: #FF4C60;
+            color: white;
+            box-shadow: 0 6px 14px #FF4C6080;
+        }
+
+        /* ── CONTENT AREA ── */
+        .content { padding: 2.5rem; display: flex; flex-direction: column; gap: 2rem; overflow-y: auto; }
+
+        /* ── FILTER CARD ── */
+        .filter-card {
+            background: var(--card-bg);
+            backdrop-filter: var(--card-backdrop);
+            border: 1px solid var(--card-border);
+            border-radius: 36px;
+            padding: 2rem 2.5rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s cubic-bezier(0.2,0.9,0.4,1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(800px circle at var(--x,50%) var(--y,0%), rgba(255,255,255,0.12), transparent 50%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+
+        .filter-card:hover::before { opacity: 1; }
+
+        .filter-card::after {
+            content: '';
+            position: absolute;
+            top: 1rem; right: 1.5rem;
+            width: 10px; height: 10px;
+            border-radius: 20px;
+            background: #6C63FF;
+            opacity: 0.5;
+        }
+
+        .filter-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+            color: var(--text-soft);
+            margin-bottom: 1.2rem;
+        }
+
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-input {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 50px;
+            padding: 0.7rem 1.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            outline: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .filter-input:focus {
+            border-color: #6C63FF60;
+            box-shadow: 0 0 0 3px rgba(108,99,255,0.12);
+        }
+
+        /* date picker icon color fix */
+        .filter-input::-webkit-calendar-picker-indicator { opacity: 0.5; cursor: pointer; }
+
+        .fetch-btn {
+            background: linear-gradient(145deg, #6C63FF, #4a43d9);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.75rem 2.2rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .fetch-btn:hover {
+            transform: scale(1.06) translateY(-3px);
+            filter: brightness(1.1);
+            box-shadow: 0 20px 30px -10px #6C63FF80;
+        }
+
+        /* ── SECTION HEADERS ── */
+        .section-header {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: -0.01em;
+            padding: 0 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .section-header::before {
+            content: '';
+            display: inline-block;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF4C60, #F91179);
+        }
+
+        /* ── TABLE CARD ── */
+        .table-card {
+            background: var(--card-bg);
+            backdrop-filter: var(--card-backdrop);
+            border: 1px solid var(--card-border);
+            border-radius: 36px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.2,0.9,0.4,1);
+            position: relative;
+        }
+
+        .table-card::after {
+            content: '';
+            position: absolute;
+            top: 1rem; right: 1.5rem;
+            width: 10px; height: 10px;
+            border-radius: 20px;
+            background: #FF4C60;
+            opacity: 0.5;
+        }
+
+        .table-wrap { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        thead tr {
+            background: linear-gradient(135deg, rgba(108,99,255,0.08), rgba(255,76,96,0.04));
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        th {
+            padding: 1.1rem 1.2rem;
+            text-align: center;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            color: var(--text-soft);
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--card-border);
+            transition: background 0.2s ease, transform 0.15s ease;
+        }
+
+        tbody tr:last-child { border-bottom: none; }
+
+        tbody tr:hover {
+            background: var(--table-row-hover);
+        }
+
+        td {
+            padding: 1rem 1.2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        td:first-child {
+            color: var(--text-soft);
+            font-size: 0.8rem;
+        }
+
+        /* tag badges */
+        .tag-late {
+            display: inline-block;
+            background: rgba(253,203,110,0.15);
+            color: #FDCB6E;
+            border: 1px solid rgba(253,203,110,0.3);
+            border-radius: 20px;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin: 0.1rem;
+        }
+
+        .tag-early {
+            display: inline-block;
+            background: rgba(255,76,96,0.1);
+            color: #FF4C60;
+            border: 1px solid rgba(255,76,96,0.25);
+            border-radius: 20px;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin: 0.1rem;
+        }
+
+        .hours-low { color: #FF4C60 !important; }
+        .hours-ok  { color: #4ECDC4 !important; }
+
+        /* ── PAGINATION ── */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--card-border);
+            border-radius: 50px;
+            padding: 0.5rem 1.2rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            border-color: #6C63FF40;
+            color: var(--text-primary);
+            box-shadow: 0 8px 20px -8px rgba(108,99,255,0.3);
+        }
+
+        .page-btn.current {
+            background: linear-gradient(145deg, #6C63FF, #4a43d9);
+            color: white;
+            border: none;
+            box-shadow: 0 6px 14px rgba(108,99,255,0.4);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty-row td {
+            padding: 3rem;
+            color: var(--text-soft);
+            font-style: italic;
+        }
+
+        /* ── HIDDEN ── */
+        .hidden { display: none !important; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .menu-area { width: 80px; }
+            .logo { font-size: 1.2rem; padding-left: 0.5rem; }
+            .menu-item span { display: none; }
+            .content { padding: 1.5rem; }
+        }
+
+        @media (max-width: 600px) {
+            .header-area { padding: 1rem 1.2rem; flex-wrap: wrap; gap: 1rem; }
+            .filter-row { flex-direction: column; align-items: stretch; }
+            .fetch-btn { text-align: center; }
+        }
+    </style>
 </head>
 
-<body class="h-screen w-screen flex bg-black text-white">
+<body class="">
+<div class="app">
+
     <x-employee-menu />
-    <div class="flex-1">
-        <x-employee-page-header />
-        <h1>Attendance History</h1>
-
-        <br>
-
-        <form id="EmpFilterHistoryForm">
-            @csrf
-            <input type="date" name="from" id="from" required>
-            <input type="date" name="to" id="to">
-            <input type="submit" value="Fetch History">
-        </form>
-
-        <br>
-
-        <table class="hidden">
-            <thead class="">
-                <tr>
-                    <th class="border border-slate-300 p-2">Sr no</th>
-                    <th class="border border-slate-300 p-2">Date</th>
-                    <th class="border border-slate-300 p-2">Day</th>
-                    <th class="border border-slate-300 p-2">Check In</th>
-                    <th class="border border-slate-300 p-2">Check Out</th>
-                    <th class="border border-slate-300 p-2">Tag</th>
-                    <th class="border border-slate-300 p-2">Worked Hours</th>
-                    <th class="border border-slate-300 p-2">Working Hours</th>
-                    <th class="border border-slate-300 p-2">Working Time From</th>
-                    <th class="border border-slate-300 p-2">Working Time To</th>
-                </tr>
-            </thead>
-            <tbody id="EmpHistoryFilter"></tbody>
-        </table>
-        <div id="paginationContainer"></div>
-
-        <br>
-
-        <table class="w-full border-collapse border border-slate-400 text-left">
-            <thead class="">
-                <tr>
-                    <th class="border border-slate-300 p-2">Sr no</th>
-                    <th class="border border-slate-300 p-2">Date</th>
-                    <th class="border border-slate-300 p-2">Day</th>
-                    <th class="border border-slate-300 p-2">Check In</th>
-                    <th class="border border-slate-300 p-2">Check Out</th>
-                    <th class="border border-slate-300 p-2">Tag</th>
-                    <th class="border border-slate-300 p-2">Worked Hours</th>
-                    <th class="border border-slate-300 p-2">Working Hours</th>
-                    <th class="border border-slate-300 p-2">Working Time From</th>
-                    <th class="border border-slate-300 p-2">Working Time To</th>
-                </tr>
-            </thead>
-            <tbody id="EmpHistory"></tbody>
-        </table>
-    </div>
-
-    {{-- Filter History --}}
-    <script>
-        document.querySelector('#EmpFilterHistoryForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            EmpFilterHistoryForm(1, true);
-        });
-
-        async function EmpFilterHistoryForm(page, isFormSubmission = false) {
-            try {
-                let currentPage = 1;
-
-                page = page || currentPage;
-                currentPage = page;
-
-                const response = await fetch(`/filter_emp_history?page=${page}`, {
-                    method: "POST",
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content')
-                    },
-                    body: new FormData(document.querySelector('#EmpFilterHistoryForm')),
-                });
-                const result = await response.json();
-
-                if (!response.ok) {
-                    toastr.error(result.error);
-                    console.error(result.error);
-                } else {
-
-                    let EmpHistoryFilter = document.querySelector('#EmpHistoryFilter');
-                    EmpHistoryFilter.innerHTML = '';
-                    EmpHistoryFilter.parentElement.classList.remove('hidden');
-
-                    let index = 0;
-
-                    result.attendance.data.forEach(i => {
-                        let tr = document.createElement('tr');
-                        let tag;
-
-                        if (i.checkin > i.user.working_from) {
-                            tag = 'Late';
-                        } else if (i.checkin < i.user.working_from) {
-                            tag = 'Early';
-                        } else {
-                            tag = '-';
-                        }
 
 
-                        tr.innerHTML = `
-                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${result.attendance.from + index}</td>
-                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${new Date(i.created_at).toLocaleDateString('en-GB')}</td>
-                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${new Date(i.created_at).toLocaleDateString('en-GB' , {weekday:'short'})}</td>
-                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${new Date(i.checkin).toLocaleTimeString('en-GB')}</td>
-                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.checkout !== null ?  new Date(i.checkout).toLocaleTimeString('en-GB') : '-'}</td>
-                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${tag}</td>
-                                <td class="border border-slate-300 p-4 text-center text-gray-500"> ${(i.hours || '0:0:0').split(':').slice(0,2).map((v, index) => `${parseInt(v)} ${index === 0 ? 'hr' : 'min'} `).join(' ')} </td>
-                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.user.hours} hr</td>
-                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.user.working_from}</td>
-                                <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.user.working_to}</td>
-                            `;
-                        EmpHistoryFilter.appendChild(tr);
-                        index++;
-                    });
+    <!-- ── MAIN ── -->
+    <div class="main">
 
-                    if (isFormSubmission) {
-                        toastr.success('Success');
-                    }
+        <!-- header -->
+        <div class="header-area">
+            <div class="page-title">🗓 Attendance <span>History</span></div>
+            <div class="theme-toggle" id="themeToggle">
+                <button class="theme-option active" data-theme="light">☀️ light</button>
+                <button class="theme-option" data-theme="dark">🌙 dark</button>
+            </div>
+        </div>
 
-                    // Pagination start
-                    let paginationContainer = document.querySelector('#paginationContainer');
-                    paginationContainer.innerHTML = '';
+        <!-- content -->
+        <div class="content">
 
-                    if (result.attendance.total > result.attendance.per_page) {
+            <!-- filter card -->
+            <div class="filter-card" id="filterCard">
+                <div class="filter-label">Filter by date range</div>
+                <form id="EmpFilterHistoryForm">
+                    <div class="filter-row">
+                        <input class="filter-input" type="date" name="from" id="from" required placeholder="From">
+                        <input class="filter-input" type="date" name="to" id="to" placeholder="To (optional)">
+                        <button type="submit" class="fetch-btn" id="fetchBtn">🔍 Fetch History</button>
+                    </div>
+                </form>
+            </div>
 
-                        let jumpToFirstPageBtn = document.createElement('button');
-                        jumpToFirstPageBtn.innerText = '<<';
-                        jumpToFirstPageBtn.classList = 'p-4';
-                        jumpToFirstPageBtn.onclick = () => EmpFilterHistoryForm(1);
+            <!-- filtered results (hidden until submitted) -->
+            <div id="filteredSection" class="hidden">
+                <div class="section-header">Filtered Results</div>
+                <div class="table-card" style="margin-top:1rem;">
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Day</th>
+                                    <th>Check In</th>
+                                    <th>Check Out</th>
+                                    <th>Tag</th>
+                                    <th>Worked</th>
+                                    <th>Required</th>
+                                    <th>Shift From</th>
+                                    <th>Shift To</th>
+                                </tr>
+                            </thead>
+                            <tbody id="EmpHistoryFilter"></tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="paginationContainer"></div>
+                </div>
+            </div>
 
-                        let prevPageBtn = document.createElement('button');
-                        prevPageBtn.innerText = 'prev';
-                        prevPageBtn.classList = 'p-4';
+            <!-- current month -->
+            <div class="section-header">This Month's Attendance</div>
+            <div class="table-card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Date</th>
+                                <th>Day</th>
+                                <th>Check In</th>
+                                <th>Check Out</th>
+                                <th>Tag</th>
+                                <th>Worked</th>
+                                <th>Required</th>
+                                <th>Shift From</th>
+                                <th>Shift To</th>
+                            </tr>
+                        </thead>
+                        <tbody id="EmpHistory">
+                            <tr class="empty-row"><td colspan="10">Loading attendance data…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-                        if (result.attendance.prev_page_url) {
-                            prevPageBtn.onclick = () => EmpFilterHistoryForm(result.attendance.current_page - 1);
-                        } else {
-                            prevPageBtn.disabled = true;
-                        }
+        </div><!-- /content -->
+    </div><!-- /main -->
+</div><!-- /app -->
 
-                        let nextPageBtn = document.createElement('button');
-                        nextPageBtn.innerText = 'next';
-                        nextPageBtn.classList = 'p-4';
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+    /* ── TOASTR ── */
+    toastr.options = { closeButton: true, progressBar: true, positionClass: "toast-bottom-right" };
 
-                        if (result.attendance.next_page_url) {
-                            nextPageBtn.onclick = () => EmpFilterHistoryForm(result.attendance.current_page + 1);
-                        } else {
-                            nextPageBtn.disabled = true;
-                        }
+    /* ── THEME ── */
+    const body = document.body;
+    const lightBtn = document.querySelector('[data-theme="light"]');
+    const darkBtn  = document.querySelector('[data-theme="dark"]');
 
-                        let jumpToLastPageBtn = document.createElement('button');
-                        jumpToLastPageBtn.innerText = '>>';
-                        jumpToLastPageBtn.classList = 'p-4';
-                        jumpToLastPageBtn.onclick = () => EmpFilterHistoryForm(result.attendance.last_page);
-
-                        paginationContainer.append(jumpToFirstPageBtn, prevPageBtn);
-
-                        let start = Math.max(1, result.attendance.current_page - 1);
-                        let end = Math.min(start + 2, result.attendance.last_page);
-
-                        if (result.attendance.current_page === result.attendance.last_page) {
-                            start = Math.max(1, result.attendance.last_page - 2);
-                            end = result.attendance.last_page;
-                        }
-
-                        for (let i = start; i <= end; i++) {
-                            let pageBtn = document.createElement('button');
-                            pageBtn.innerText = i;
-                            pageBtn.className = 'p-2';
-
-                            if (i === result.attendance.current_page) {
-                                pageBtn.className = 'p-2 bg-blue-800 text-white';
-                            }
-
-                            pageBtn.onclick = () => EmpFilterHistoryForm(i);
-                            paginationContainer.appendChild(pageBtn);
-                        }
-
-                        paginationContainer.append(nextPageBtn, jumpToLastPageBtn);
-                    }
-                    // Pagination ends
-                }
-
-            } catch (e) {
-                toastr.error(e);
-                console.error(e);
-            }
+    function setTheme(theme) {
+        if (theme === 'dark') {
+            body.classList.add('dark');
+            lightBtn.classList.remove('active');
+            darkBtn.classList.add('active');
+        } else {
+            body.classList.remove('dark');
+            darkBtn.classList.remove('active');
+            lightBtn.classList.add('active');
         }
-    </script>
-    {{-- /Filter History --}}
+        localStorage.setItem('theme', theme);
+        toastr.info(`✨ ${theme} mode`, '', { timeOut: 900 });
+    }
 
+    lightBtn.addEventListener('click', () => setTheme('light'));
+    darkBtn.addEventListener('click', () => setTheme('dark'));
+    setTheme(localStorage.getItem('theme') || 'light');
 
-    {{-- Current Month Attendance History --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
+    /* ── MOUSE GLOW ── */
+    document.querySelectorAll('.filter-card, .table-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const r = card.getBoundingClientRect();
+            card.style.setProperty('--x', ((e.clientX - r.left) / r.width * 100) + '%');
+            card.style.setProperty('--y', ((e.clientY - r.top)  / r.height * 100) + '%');
+        });
+    });
 
-            let index = 0;
+    /* ── HELPERS ── */
+    function buildTag(tagStr) {
+        if (!tagStr || tagStr === '-') return '<span style="color:var(--text-soft)">—</span>';
+        return tagStr
+            .replace(/Late/g,       '<span class="tag-late">Late</span>')
+            .replace(/Early leave/g,'<span class="tag-early">Early Leave</span>');
+    }
 
-            try {
-                const response = await fetch('/emp/history');
-                const result = await response.json();
+    function fmtHours(hours) {
+        return (hours || '0:0:0').split(':').slice(0,2)
+            .map((v,i) => `${parseInt(v)} ${i===0?'hr':'min'}`).join(' ');
+    }
 
-                if (response.ok) {
+    function buildRow(i, index, tagStr) {
+        const hoursVal = parseInt((i.hours||'0').split(':')[0]);
+        const hoursClass = hoursVal < 9 ? 'hours-low' : 'hours-ok';
+        return `
+            <td>${index}</td>
+            <td>${new Date(i.created_at).toLocaleDateString('en-GB')}</td>
+            <td>${new Date(i.created_at).toLocaleDateString('en-GB',{weekday:'short'})}</td>
+            <td>${new Date(i.checkin).toLocaleTimeString('en-GB')}</td>
+            <td>${i.checkout ? new Date(i.checkout).toLocaleTimeString('en-GB') : '—'}</td>
+            <td>${buildTag(tagStr)}</td>
+            <td class="${hoursClass}">${fmtHours(i.hours)}</td>
+            <td>${i.user.hours} hr</td>
+            <td>${i.user.working_from}</td>
+            <td>${i.user.working_to}</td>
+        `;
+    }
 
-                    let EmpHistory = document.querySelector('#EmpHistory');
-                    EmpHistory.innerHTML = '';
+    /* ── FILTER FORM ── */
+    document.querySelector('#EmpFilterHistoryForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const btn = document.getElementById('fetchBtn');
+        btn.style.transform = 'scale(0.96)';
+        setTimeout(() => btn.style.transform = '', 200);
+        EmpFilterHistoryForm(1, true);
+    });
 
-                    result.History.forEach(i => {
-                        index++;
-                        let tr = document.createElement('tr');
+    async function EmpFilterHistoryForm(page, isFormSubmission = false) {
+        try {
+            const response = await fetch(`/filter_emp_history?page=${page}`, {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
+                body: new FormData(document.querySelector('#EmpFilterHistoryForm')),
+            });
+            const result = await response.json();
 
-                        let tag = '';
-                        const checkinDate = new Date(i.checkin);
-                        const checkinTotalMinutes = (checkinDate.getHours() * 60) + checkinDate
-                            .getMinutes();
+            if (!response.ok) { toastr.error(result.error); return; }
 
-                        const [h, m] = i.user.working_from.split(':');
-                        const workTotalMinutes = (parseInt(h) * 60) + parseInt(m);
+            const tbody = document.querySelector('#EmpHistoryFilter');
+            tbody.innerHTML = '';
+            document.getElementById('filteredSection').classList.remove('hidden');
 
-                        if (checkinTotalMinutes > workTotalMinutes) {
-                            tag = `<span class="bg-yellow-500 text-red-500 m-2">Late</span>`;
-                        }
+            result.attendance.data.forEach((i, idx) => {
+                let tag = '';
+                if (i.checkin > i.user.working_from) tag = 'Late';
+                else if (i.checkin < i.user.working_from) tag = 'Early';
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildRow(i, result.attendance.from + idx, tag);
+                tbody.appendChild(tr);
+            });
 
-                        if (i.checkout) {
+            if (isFormSubmission) toastr.success('✅ History fetched');
 
-                            const checkoutDate = new Date(i.checkout);
-                            const checkoutTotalMinutes = (checkoutDate.getHours() * 60) + checkoutDate
-                                .getMinutes();
+            /* pagination */
+            buildPagination(result.attendance, page => EmpFilterHistoryForm(page));
 
-                            const [h_end, m_end] = i.user.working_to.split(':');
-                            const workEndTotalMinutes = (parseInt(h_end) * 60) + parseInt(m_end);
+        } catch(e) { toastr.error(String(e)); }
+    }
 
-                            if (checkoutTotalMinutes < workEndTotalMinutes) {
-                                tag +=
-                                    `<span class="bg-yellow-500 text-red-500 m-2">Early leave</span>`;
-                            }
-                        }
+    function buildPagination(meta, cb) {
+        const container = document.getElementById('paginationContainer');
+        container.innerHTML = '';
+        if (meta.total <= meta.per_page) return;
 
-                        if (tag === '') {
-                            tag = '-';
-                        }
+        const make = (label, page, disabled, isCurrent) => {
+            const btn = document.createElement('button');
+            btn.className = 'page-btn' + (isCurrent ? ' current' : '');
+            btn.textContent = label;
+            btn.disabled = disabled;
+            if (!disabled && !isCurrent) btn.onclick = () => cb(page);
+            return btn;
+        };
 
-                        tr.innerHTML = `
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${index}</td>
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${new Date(i.created_at).toLocaleDateString('en-GB')}</td>
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${new Date(i.created_at).toLocaleDateString('en-GB' , {weekday:'short'})}</td>
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${new Date(i.checkin).toLocaleTimeString('en-GB')}</td>
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.checkout !== null ?  new Date(i.checkout).toLocaleTimeString('en-GB') : '-'}</td>
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${tag}</td>
-                            <td class="border border-slate-300 p-4 text-center ${parseInt(i.hours) < 9 ? 'text-red-500' : 'text-gray-500'}"> 
-                                ${(i.hours || '0:0:0').split(':').slice(0,2).map((v, index) => `${parseInt(v)} ${index === 0 ? 'hr' : 'min'} `).join(' ')} 
-                            </td>
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.user.hours} hr</td>
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.user.working_from}</td>
-                            <td  class="border border-slate-300 p-4 text-center text-gray-500">${i.user.working_to}</td>
-                        `;
-                        EmpHistory.appendChild(tr);
-                    });
+        container.appendChild(make('«', 1, false, false));
+        container.appendChild(make('‹ Prev', meta.current_page - 1, !meta.prev_page_url, false));
 
-                } else {
-                    toastr.error(result.error);
-                    console.error(result.error);
-                }
-            } catch (e) {
-                toastr.error(e);
+        let start = Math.max(1, meta.current_page - 1);
+        let end   = Math.min(start + 2, meta.last_page);
+        if (meta.current_page === meta.last_page) { start = Math.max(1, meta.last_page - 2); end = meta.last_page; }
+
+        for (let i = start; i <= end; i++) {
+            container.appendChild(make(i, i, false, i === meta.current_page));
+        }
+
+        container.appendChild(make('Next ›', meta.current_page + 1, !meta.next_page_url, false));
+        container.appendChild(make('»', meta.last_page, false, false));
+    }
+
+    /* ── CURRENT MONTH ── */
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const response = await fetch('/emp/history');
+            const result   = await response.json();
+
+            const tbody = document.querySelector('#EmpHistory');
+            tbody.innerHTML = '';
+
+            if (!response.ok) { toastr.error(result.error); return; }
+
+            if (!result.History.length) {
+                tbody.innerHTML = '<tr class="empty-row"><td colspan="10">No attendance records this month.</td></tr>';
+                return;
             }
 
-        });
-    </script>
-    {{-- /Current Month Attendance History --}}
+            result.History.forEach((i, idx) => {
+                let tagStr = '';
 
+                const checkinDate = new Date(i.checkin);
+                const checkinMins = checkinDate.getHours() * 60 + checkinDate.getMinutes();
+                const [h, m] = i.user.working_from.split(':');
+                const workMins = parseInt(h) * 60 + parseInt(m);
+                if (checkinMins > workMins) tagStr += 'Late';
+
+                if (i.checkout) {
+                    const checkoutDate = new Date(i.checkout);
+                    const checkoutMins = checkoutDate.getHours() * 60 + checkoutDate.getMinutes();
+                    const [h2, m2] = i.user.working_to.split(':');
+                    const workEndMins = parseInt(h2) * 60 + parseInt(m2);
+                    if (checkoutMins < workEndMins) tagStr += 'Early leave';
+                }
+
+                if (!tagStr) tagStr = '-';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildRow(i, idx + 1, tagStr);
+                tbody.appendChild(tr);
+            });
+
+        } catch(e) { toastr.error(String(e)); }
+    });
+</script>
 </body>
-
 </html>

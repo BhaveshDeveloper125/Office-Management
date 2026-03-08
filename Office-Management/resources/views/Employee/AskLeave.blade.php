@@ -6,216 +6,735 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Attendance</title>
-    <x-link />
+    <title>Leave • Request</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ── TOKENS ── */
+        :root {
+            --bg-gradient-start: #f0f3fa;
+            --bg-gradient-end:   #e9eef5;
+            --card-bg:           rgba(255,255,255,0.75);
+            --card-border:       rgba(255,255,255,0.5);
+            --card-shadow:       0 25px 50px -18px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.7) inset;
+            --text-primary:      #1b1f2c;
+            --text-secondary:    #4d5466;
+            --text-soft:         #7b8395;
+            --header-bg:         rgba(255,255,255,0.4);
+            --menu-bg:           rgba(255,255,255,0.3);
+            --toggle-bg:         rgba(255,255,255,0.4);
+            --toggle-border:     rgba(255,255,255,0.6);
+            --card-backdrop:     blur(16px);
+            --input-bg:          rgba(255,255,255,0.65);
+            --input-border:      rgba(200,205,220,0.7);
+            --row-hover:         rgba(108,99,255,0.04);
+        }
+
+        body.dark {
+            --bg-gradient-start: #0c0c17;
+            --bg-gradient-end:   #151522;
+            --card-bg:           rgba(20,20,35,0.6);
+            --card-border:       rgba(255,255,255,0.03);
+            --card-shadow:       0 30px 60px -20px #000, 0 0 0 1px rgba(255,255,255,0.02) inset;
+            --text-primary:      #f0f0fd;
+            --text-secondary:    #bcc1d4;
+            --text-soft:         #8f95aa;
+            --header-bg:         rgba(10,10,22,0.5);
+            --menu-bg:           rgba(10,10,22,0.5);
+            --toggle-bg:         rgba(30,30,50,0.6);
+            --toggle-border:     rgba(255,255,255,0.1);
+            --card-backdrop:     blur(20px);
+            --input-bg:          rgba(20,20,40,0.7);
+            --input-border:      rgba(255,255,255,0.07);
+            --row-hover:         rgba(108,99,255,0.09);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: background-color 0.4s cubic-bezier(0.2,0.9,0.3,1), color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* ── SHELL ── */
+        .app { display: flex; min-height: 100vh; }
+
+        /* ── SIDEBAR ── */
+        .menu-area {
+            width: 280px;
+            flex-shrink: 0;
+            background: var(--menu-bg);
+            backdrop-filter: var(--card-backdrop);
+            border-right: 1px solid var(--card-border);
+            box-shadow: 4px 0 30px -10px rgba(0,0,0,0.1);
+            padding: 2rem 1rem;
+            transition: background 0.4s, border-color 0.3s;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 3rem;
+            padding-left: 1rem;
+            background: linear-gradient(130deg, #FF4C60, #6C63FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .menu-items { display: flex; flex-direction: column; gap: 0.8rem; }
+
+        .menu-item {
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.25s ease;
+            border: 1px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+
+        .menu-item:hover {
+            background: var(--card-bg);
+            border-color: var(--card-border);
+            color: var(--text-primary);
+            transform: translateX(6px);
+        }
+
+        .menu-item.active {
+            background: var(--card-bg);
+            border-color: #FF4C60;
+            color: var(--text-primary);
+            box-shadow: 0 6px 14px rgba(255,76,96,0.2);
+        }
+
+        /* ── MAIN ── */
+        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* ── HEADER ── */
+        .header-area {
+            padding: 1.5rem 2.5rem;
+            background: var(--header-bg);
+            backdrop-filter: var(--card-backdrop);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.4s;
+        }
+
+        .page-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .page-title span {
+            background: linear-gradient(135deg, #FF4C60, #F91179);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* theme toggle */
+        .theme-toggle {
+            background: var(--toggle-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--toggle-border);
+            border-radius: 60px;
+            padding: 0.3rem;
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .theme-option {
+            padding: 0.6rem 1.8rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            border: none;
+            background: transparent;
+        }
+
+        .theme-option.active {
+            background: #FF4C60;
+            color: white;
+            box-shadow: 0 6px 14px #FF4C6080;
+        }
+
+        /* ── CONTENT ── */
+        .content { padding: 2.5rem; display: flex; flex-direction: column; gap: 2.5rem; overflow-y: auto; }
+
+        /* ── SECTION LABEL ── */
+        .section-header {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0 0.5rem;
+        }
+
+        .section-header::before {
+            content: '';
+            display: inline-block;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF4C60, #F91179);
+        }
+
+        /* ── GLASS CARD ── */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: var(--card-backdrop);
+            border: 1px solid var(--card-border);
+            border-radius: 36px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s cubic-bezier(0.2,0.9,0.4,1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(800px circle at var(--x,50%) var(--y,0%), rgba(255,255,255,0.13), transparent 50%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+
+        .glass-card:hover::before { opacity: 1; }
+
+        /* ── FORM CARD ── */
+        .form-card { padding: 2.5rem 2.8rem; }
+
+        .form-card::after {
+            content: '';
+            position: absolute;
+            top: 1rem; right: 1.5rem;
+            width: 10px; height: 10px;
+            border-radius: 20px;
+            background: #6C63FF;
+            opacity: 0.5;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 0.45rem; }
+        .form-group.full { grid-column: 1 / -1; }
+
+        .form-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            color: var(--text-soft);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 16px;
+            padding: 0.8rem 1.2rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            outline: none;
+            transition: all 0.25s ease;
+            backdrop-filter: blur(6px);
+            width: 100%;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: rgba(108,99,255,0.45);
+            box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 110px;
+            border-radius: 20px;
+        }
+
+        .form-input::-webkit-calendar-picker-indicator { opacity: 0.4; cursor: pointer; }
+
+        /* custom select arrow */
+        .select-wrap { position: relative; }
+        .select-wrap::after {
+            content: '▾';
+            position: absolute;
+            right: 1.1rem; top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-soft);
+            pointer-events: none;
+            font-size: 0.85rem;
+        }
+
+        .form-actions {
+            margin-top: 1.8rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .submit-btn {
+            background: linear-gradient(145deg, #6C63FF, #4a43d9);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.9rem 3rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.4px;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.06) translateY(-3px);
+            filter: brightness(1.1);
+            box-shadow: 0 20px 30px -10px #6C63FF80;
+        }
+
+        /* ── TABLE CARD ── */
+        .table-card::after {
+            content: '';
+            position: absolute;
+            top: 1rem; right: 1.5rem;
+            width: 10px; height: 10px;
+            border-radius: 20px;
+            background: #FF4C60;
+            opacity: 0.5;
+        }
+
+        .table-wrap { overflow-x: auto; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+
+        thead tr {
+            background: linear-gradient(135deg, rgba(108,99,255,0.07), rgba(255,76,96,0.04));
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        th {
+            padding: 1.1rem 1.4rem;
+            text-align: left;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            color: var(--text-soft);
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--card-border);
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--row-hover); }
+
+        td {
+            padding: 1rem 1.4rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        td.title-cell { color: var(--text-primary); font-weight: 500; }
+
+        td.desc-cell {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--text-soft);
+            font-size: 0.85rem;
+        }
+
+        /* leave type badge */
+        .type-badge {
+            display: inline-block;
+            border-radius: 20px;
+            padding: 0.25rem 0.8rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .type-casual  { background: rgba(108,99,255,0.12); color: #6C63FF; border: 1px solid rgba(108,99,255,0.2); }
+        .type-medical { background: rgba(78,205,196,0.12); color: #4ECDC4; border: 1px solid rgba(78,205,196,0.2); }
+        .type-other   { background: rgba(253,203,110,0.12); color: #FDCB6E; border: 1px solid rgba(253,203,110,0.2); }
+
+        /* approval status */
+        .status-pending  { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--text-soft);  font-size: 0.85rem; font-weight: 500; }
+        .status-approved { display: inline-flex; align-items: center; gap: 0.4rem; color: #4ECDC4; font-size: 0.85rem; font-weight: 600; }
+        .status-rejected { display: inline-flex; align-items: center; gap: 0.4rem; color: #FF4C60; font-size: 0.85rem; font-weight: 600; }
+
+        .status-pending::before  { content:'●'; font-size:0.6rem; color: var(--text-soft); }
+        .status-approved::before { content:'●'; font-size:0.6rem; color:#4ECDC4; }
+        .status-rejected::before { content:'●'; font-size:0.6rem; color:#FF4C60; }
+
+        .days-badge {
+            font-family: 'Space Grotesk', monospace;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* ── PAGINATION ── */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            background: var(--card-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--card-border);
+            border-radius: 50px;
+            padding: 0.5rem 1.2rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            border-color: rgba(108,99,255,0.3);
+            color: var(--text-primary);
+            box-shadow: 0 8px 20px -8px rgba(108,99,255,0.3);
+        }
+
+        .page-btn.current {
+            background: linear-gradient(145deg, #6C63FF, #4a43d9);
+            color: white;
+            border: none;
+            box-shadow: 0 6px 14px rgba(108,99,255,0.4);
+        }
+
+        .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        /* ── EMPTY STATE ── */
+        .empty-row td {
+            padding: 3rem;
+            text-align: center;
+            color: var(--text-soft);
+            font-style: italic;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .menu-area { width: 80px; }
+            .logo { font-size: 1.2rem; padding-left: 0.4rem; }
+            .content { padding: 1.5rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group.full { grid-column: auto; }
+        }
+
+        @media (max-width: 600px) {
+            .header-area { padding: 1rem 1.2rem; flex-wrap: wrap; gap: 0.8rem; }
+            .form-card { padding: 1.8rem 1.5rem; }
+        }
+    </style>
 </head>
 
-<body class="h-screen w-screen flex bg-black text-white">
+<body class="">
+<div class="app">
+
     <x-employee-menu />
-    <div class="flex-1">
-        <x-employee-page-header />
 
-        <form id="leave_form" onsubmit="return confirm('Are you sure you want to request this leave permission ? ')">
-            @csrf
-            <input type="text" name="title" id="title" placeholder="Enter leave title" required> <br>
-            <select name="duration_type" id="duration_type" required>
-                <option value="half">Half</option>
-                <option value="full">Full</option>
-            </select>
-            <input type="date" name="from" id="from" placeholder="Select start date" required><br>
-            <input type="date" name="to" id="to" placeholder="Select end date" required><br>
-            <select name="leave_type" id="leave_type" required>
-                <option value="casual">casual</option>
-                <option value="medical">medical</option>
-                <option value="other">other</option>
-            </select>
-            <textarea name="description" id="description" placeholder="Describe your leave request" required></textarea>
-            <input type="submit" value="Request">
-        </form>
+    <!-- ── MAIN ── -->
+    <div class="main">
 
-        <br><br>
+        <!-- header -->
+        <div class="header-area">
+            <div class="page-title">🌿 Leave <span>Request</span></div>
+            <div class="theme-toggle">
+                <button class="theme-option active" data-theme="light">☀️ light</button>
+                <button class="theme-option" data-theme="dark">🌙 dark</button>
+            </div>
+        </div>
 
-        <table class="w-full">
-            <thead>
-                <tr class="border-b border-gray-700">
-                    <th class="p-2 text-left">Title</th>
-                    <th class="p-2 text-left">From</th>
-                    <th class="p-2 text-left">To</th>
-                    <th class="p-2 text-left">Days</th>
-                    <th class="p-2 text-left">Leave Type</th>
-                    <th class="p-2 text-left">Description</th>
-                    <th class="p-2 text-left">Approve</th>
-                </tr>
-            </thead>
-            <tbody id="leaveTable"></tbody>
-        </table>
-        <div id="paginationContainer"></div>
+        <!-- content -->
+        <div class="content">
 
+            <!-- form card -->
+            <div class="section-header">New Leave Request</div>
+            <div class="glass-card form-card" id="formCard">
+                <form id="leave_form">
+                    <div class="form-grid">
 
-        {{-- Submit Leave Request --}}
-        <script>
-            document.querySelector('#leave_form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                try {
-                    const response = await fetch('/create_leave', {
-                        method: "POST",
-                        body: new FormData(e.target),
-                    });
-                    const result = await response.json();
+                        <!-- title -->
+                        <div class="form-group full">
+                            <label class="form-label" for="title">Leave Title</label>
+                            <input class="form-input" type="text" name="title" id="title" placeholder="e.g. Family vacation, Medical appointment…" required>
+                        </div>
 
-                    if (!response.ok) {
-                        toastr.error(result.error);
-                    } else {
-                        GetEmpLeaves();
-                        toastr.success(result.success);
-                    }
+                        <!-- duration type -->
+                        <div class="form-group">
+                            <label class="form-label" for="duration_type">Duration Type</label>
+                            <div class="select-wrap">
+                                <select class="form-select" name="duration_type" id="duration_type" required>
+                                    <option value="half">Half Day</option>
+                                    <option value="full">Full Day</option>
+                                </select>
+                            </div>
+                        </div>
 
-                } catch (e) {
-                    toastr.error(e)
-                }
+                        <!-- leave type -->
+                        <div class="form-group">
+                            <label class="form-label" for="leave_type">Leave Type</label>
+                            <div class="select-wrap">
+                                <select class="form-select" name="leave_type" id="leave_type" required>
+                                    <option value="casual">Casual</option>
+                                    <option value="medical">Medical</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- from -->
+                        <div class="form-group">
+                            <label class="form-label" for="from">From Date</label>
+                            <input class="form-input" type="date" name="from" id="from" required>
+                        </div>
+
+                        <!-- to -->
+                        <div class="form-group">
+                            <label class="form-label" for="to">To Date</label>
+                            <input class="form-input" type="date" name="to" id="to" required>
+                        </div>
+
+                        <!-- description -->
+                        <div class="form-group full">
+                            <label class="form-label" for="description">Description</label>
+                            <textarea class="form-textarea" name="description" id="description" placeholder="Briefly describe your reason for leave…" required></textarea>
+                        </div>
+
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="submit-btn" id="submitBtn">🌿 Submit Request</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- leave history table -->
+            <div class="section-header">My Leave Requests</div>
+            <div class="glass-card table-card" id="tableCard">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Days</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaveTable">
+                            <tr class="empty-row"><td colspan="7">Loading your leave requests…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="paginationContainer"></div>
+            </div>
+
+        </div><!-- /content -->
+    </div><!-- /main -->
+</div><!-- /app -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+    /* ── TOASTR ── */
+    toastr.options = { closeButton: true, progressBar: true, positionClass: 'toast-bottom-right' };
+
+    /* ── THEME ── */
+    const lightBtn = document.querySelector('[data-theme="light"]');
+    const darkBtn  = document.querySelector('[data-theme="dark"]');
+
+    function setTheme(theme) {
+        document.body.classList.toggle('dark', theme === 'dark');
+        lightBtn.classList.toggle('active', theme === 'light');
+        darkBtn.classList.toggle('active', theme === 'dark');
+        localStorage.setItem('theme', theme);
+        toastr.info(`✨ ${theme} mode`, '', { timeOut: 900 });
+    }
+
+    lightBtn.addEventListener('click', () => setTheme('light'));
+    darkBtn.addEventListener('click', () => setTheme('dark'));
+    setTheme(localStorage.getItem('theme') || 'light');
+
+    /* ── MOUSE GLOW ── */
+    ['formCard', 'tableCard'].forEach(id => {
+        const el = document.getElementById(id);
+        el.addEventListener('mousemove', e => {
+            const r = el.getBoundingClientRect();
+            el.style.setProperty('--x', ((e.clientX - r.left) / r.width * 100) + '%');
+            el.style.setProperty('--y', ((e.clientY - r.top)  / r.height * 100) + '%');
+        });
+    });
+
+    /* ── HELPERS ── */
+    function approvalBadge(val) {
+        if (val === null || val === undefined)    return '<span class="status-pending">Not Reviewed</span>';
+        if (val === true  || val === 1)           return '<span class="status-approved">Approved</span>';
+        if (val === false || val === 0)           return '<span class="status-rejected">Rejected</span>';
+        return '<span class="status-pending">Unknown</span>';
+    }
+
+    function typeBadge(type) {
+        const cls = { casual: 'type-casual', medical: 'type-medical', other: 'type-other' }[type] || 'type-other';
+        return `<span class="type-badge ${cls}">${type}</span>`;
+    }
+
+    function calcDays(from, to) {
+        return Math.round((new Date(to) - new Date(from)) / (1000*60*60*24)) + 1;
+    }
+
+    /* ── SUBMIT LEAVE ── */
+    document.getElementById('leave_form').addEventListener('submit', async e => {
+        e.preventDefault();
+
+        if (!confirm('Are you sure you want to submit this leave request?')) return;
+
+        const btn = document.getElementById('submitBtn');
+        btn.style.transform = 'scale(0.96)';
+        setTimeout(() => btn.style.transform = '', 200);
+
+        try {
+            const response = await fetch('/create_leave', {
+                method: 'POST',
+                body: new FormData(e.target),
             });
-        </script>
-        {{-- /Submit Leave Request --}}
+            const result = await response.json();
 
-        {{-- Get Leaves --}}
-        <script>
-            async function GetEmpLeaves(page) {
-                try {
-                    let currentPage = 1;
+            if (!response.ok) {
+                toastr.error(result.error);
+            } else {
+                e.target.reset();
+                GetEmpLeaves(1);
+                toastr.success(result.success || '🌿 Leave request submitted!');
+            }
+        } catch(err) {
+            toastr.error(String(err));
+        }
+    });
 
-                    page = page || currentPage;
-                    currentPage = page;
+    /* ── GET LEAVES ── */
+    async function GetEmpLeaves(page) {
+        page = page || 1;
 
-                    leaveTable.innerHTML = '<tr><td colspan="7" class="text-center p-4">Loading...</td></tr>';
+        const tbody = document.getElementById('leaveTable');
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Loading…</td></tr>';
 
-                    const response = await fetch(`/getempleave?page=${page}`);
-                    const result = await response.json();
+        try {
+            const response = await fetch(`/getempleave?page=${page}`);
+            const result   = await response.json();
 
-                    if (!response.ok) {
-                        toastr.error(result.error);
-                    } else {
+            if (!response.ok) { toastr.error(result.error); return; }
 
-                        let leaveTable = document.querySelector('#leaveTable');
-                        leaveTable.innerHTML = '';
+            tbody.innerHTML = '';
 
-                        result.leaves.data.forEach(i => {
-                            let tr = document.createElement('tr');
-
-                            let approval;
-
-                            switch (i.approve) {
-                                case null:
-                                    approval = '<span class="text-gray-500">Not Reviewed</span>';
-                                    break;
-
-                                case true:
-                                case 1:
-                                    approval = '<span class="text-green-500">Approved</span>';
-                                    break;
-
-                                case false:
-                                case 0:
-                                    approval = '<span class="text-red-500">Rejected</span>';
-                                    break;
-
-                                default:
-                                    approval = '<span class="text-gray-500">Unknown</span>';
-                                    break;
-                            }
-
-                            tr.innerHTML = `
-                                <td class="p-2 border-b border-gray-700">${i.title}</td>
-                                <td class="p-2 border-b border-gray-700">${i.from}</td>
-                                <td class="p-2 border-b border-gray-700">${i.to}</td>
-                                <td class="p-2 border-b border-gray-700">${ (new Date(i.to).getTime() - new Date(i.from).getTime()) / (1000 * 60 * 60 * 24) + 1 }</td>
-                                <td class="p-2 border-b border-gray-700">${i.leave_type}</td>
-                                <td class="p-2 border-b border-gray-700">${i.description}</td>
-                                <td class="p-2 border-b border-gray-700">${approval}</td>
-                            `;
-                            leaveTable.appendChild(tr);
-                        });
-
-                        // Pagination start
-                        let paginationContainer = document.querySelector('#paginationContainer');
-                        paginationContainer.innerHTML = '';
-
-                        let jumpToFirstPageBtn = document.createElement('button');
-                        jumpToFirstPageBtn.innerText = '<<';
-                        jumpToFirstPageBtn.classList = 'p-4';
-                        jumpToFirstPageBtn.onclick = () => GetEmpLeaves(1);
-
-                        let prevPageBtn = document.createElement('button');
-                        prevPageBtn.innerText = 'prev';
-                        prevPageBtn.classList = 'p-4';
-
-                        if (result.leaves.prev) {
-                            prevPageBtn.onclick = () => GetEmpLeaves(result.leaves.prev);
-                        } else {
-                            prevPageBtn.disabled = true;
-                        }
-
-                        let nextPageBtn = document.createElement('button');
-                        nextPageBtn.innerText = 'next';
-                        nextPageBtn.classList = 'p-4';
-
-                        if (result.leaves.next) {
-                            nextPageBtn.onclick = () => GetEmpLeaves(result.leaves.next);
-                        } else {
-                            nextPageBtn.disabled = true;
-                        }
-
-                        let jumpToLastPageBtn = document.createElement('button');
-                        jumpToLastPageBtn.innerText = '>>';
-                        jumpToLastPageBtn.onclick = () => GetEmpLeaves(result.leaves.last_page);
-
-                        paginationContainer.append(jumpToFirstPageBtn, prevPageBtn);
-
-                        let limit = Math.ceil(result.leaves.current_page / 3) * 3;
-
-                        if (result.leaves.current_page % 3 === 0) {
-                            limit += 3;
-                        }
-
-                        if (limit > result.leaves.last_page) {
-                            limit = result.leaves.last_page;
-                        }
-
-                        for (let i = 1; i <= limit; i++) {
-                            let pageBtn = document.createElement('button');
-                            pageBtn.innerText = i;
-                            pageBtn.className = 'p-2';
-
-                            if (i === result.leaves.current_page) {
-                                pageBtn.className = 'p-2 bg-blue-800 text-white';
-                            }
-
-                            pageBtn.onclick = () => GetEmpLeaves(i);
-                            paginationContainer.appendChild(pageBtn);
-                        }
-
-                        if (limit < result.leaves.last_page) {
-                            let dots = document.createElement('button');
-                            dots.innerText = '...';
-                            dots.className = 'p-2';
-                            dots.disabled = true;
-                            paginationContainer.appendChild(dots);
-                        }
-
-                        paginationContainer.append(nextPageBtn, jumpToLastPageBtn);
-                        // Pagination ends
-                    }
-                } catch (e) {
-                    toastr.error(e);
-                    console.error(e);
-                }
+            if (!result.leaves.data.length) {
+                tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No leave requests found.</td></tr>';
+                return;
             }
 
-            document.addEventListener('DOMContentLoaded', () => GetEmpLeaves(1));
-        </script>
-        {{-- /Get Leaves --}}
+            result.leaves.data.forEach(i => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="title-cell">${i.title}</td>
+                    <td>${i.from}</td>
+                    <td>${i.to}</td>
+                    <td><span class="days-badge">${calcDays(i.from, i.to)}</span></td>
+                    <td>${typeBadge(i.leave_type)}</td>
+                    <td class="desc-cell" title="${i.description}">${i.description}</td>
+                    <td>${approvalBadge(i.approve)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
 
-    </div>
+            buildPagination(result.leaves);
 
+        } catch(err) {
+            toastr.error(String(err));
+        }
+    }
+
+    function buildPagination(meta) {
+        const container = document.getElementById('paginationContainer');
+        container.innerHTML = '';
+
+        const make = (label, onClick, disabled, isCurrent) => {
+            const btn = document.createElement('button');
+            btn.className = 'page-btn' + (isCurrent ? ' current' : '');
+            btn.textContent = label;
+            btn.disabled = disabled;
+            if (!disabled && !isCurrent && onClick) btn.onclick = onClick;
+            return btn;
+        };
+
+        container.appendChild(make('«', () => GetEmpLeaves(1), false, false));
+        container.appendChild(make('‹', () => GetEmpLeaves(meta.current_page - 1), !meta.prev, false));
+
+        let limit = Math.ceil(meta.current_page / 3) * 3;
+        if (meta.current_page % 3 === 0) limit += 3;
+        if (limit > meta.last_page) limit = meta.last_page;
+
+        for (let i = 1; i <= limit; i++) {
+            container.appendChild(make(i, () => GetEmpLeaves(i), false, i === meta.current_page));
+        }
+
+        if (limit < meta.last_page) {
+            container.appendChild(make('…', null, true, false));
+        }
+
+        container.appendChild(make('›', () => GetEmpLeaves(meta.current_page + 1), !meta.next, false));
+        container.appendChild(make('»', () => GetEmpLeaves(meta.last_page), false, false));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => GetEmpLeaves(1));
+</script>
 </body>
-
 </html>
