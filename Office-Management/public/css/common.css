@@ -216,3 +216,126 @@ body.dark {
     border-radius: 50%;
     background: linear-gradient(135deg, #FF4C60, #F91179);
 }
+
+/* ── RESPONSIVE SIDEBAR ── */
+
+/* ── Hamburger button — hidden on desktop, shown on mobile ── */
+.sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1200;
+    background: var(--card-bg);
+    backdrop-filter: var(--card-backdrop);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    width: 42px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: 1.15rem;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s ease, background 0.2s;
+}
+.sidebar-toggle:hover { transform: scale(1.08); }
+
+/* ── Close (✕) button inside sidebar — hidden on desktop ── */
+.sidebar-close {
+    display: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+    align-self: flex-end;
+}
+.sidebar-close:hover { color: #FF4C60; background: var(--card-bg); }
+
+/* ── Dim overlay — only mounted & visible on mobile ── */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 1050;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+.sidebar-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* ── Mobile breakpoint ( ≤ 900 px ) ── */
+@media (max-width: 900px) {
+
+    /* 1. Hamburger ─ visible */
+    .sidebar-toggle {
+        display: flex;
+    }
+
+    /* 2. Overlay ─ mounted (opacity controlled by JS class) */
+    .sidebar-overlay {
+        display: block;
+    }
+
+    /* 3. Sidebar ─ HIDDEN from layout by default */
+    .menu-area {
+        display: none;           /* completely out of flex flow */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 270px;
+        height: 100vh;
+        z-index: 1100;
+        flex-direction: column;
+        overflow-y: auto;
+        padding: 1.2rem 1rem;
+        box-shadow: 6px 0 40px rgba(0, 0, 0, 0.3);
+        /* smooth slide-in when .open is added */
+        animation: none;
+    }
+
+    /* 4. Sidebar ─ VISIBLE when .open toggled by JS */
+    .menu-area.open {
+        display: flex;           /* back in view as a flex column */
+        animation: slideIn 0.28s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+
+    @keyframes slideIn {
+        from { transform: translateX(-100%); opacity: 0.5; }
+        to   { transform: translateX(0);     opacity: 1;   }
+    }
+
+    /* 5. Close button ─ visible inside the drawer */
+    .sidebar-close {
+        display: block;
+    }
+
+    /* 6. Main fills full width */
+    .main {
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* 7. Header leaves room for the hamburger */
+    .header-area {
+        padding-left: 4rem;
+    }
+
+    .clock-pill { display: none; }
+}
+
+@media (max-width: 600px) {
+    .header-area { padding: 0.9rem 1rem 0.9rem 4rem; flex-wrap: wrap; gap: 0.6rem; }
+    .content { padding: 1.2rem; }
+}

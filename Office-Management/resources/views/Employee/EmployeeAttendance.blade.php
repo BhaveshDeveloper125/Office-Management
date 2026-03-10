@@ -280,7 +280,7 @@
 
         /* ── RESPONSIVE ── */
         @media (max-width: 900px) {
-            .menu-area { width: 80px; }
+            /* .menu-area handled by common.css */
             .logo { font-size: 1.2rem; padding-left: 0.5rem; }
             .menu-item span { display: none; }
             .content { padding: 1.5rem; }

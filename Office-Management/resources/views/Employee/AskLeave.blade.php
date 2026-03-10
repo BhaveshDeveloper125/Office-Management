@@ -295,7 +295,7 @@
 
         /* ── RESPONSIVE ── */
         @media (max-width: 900px) {
-            .menu-area { width: 80px; }
+            /* .menu-area handled by common.css */
             .logo { font-size: 1.2rem; padding-left: 0.4rem; }
             .content { padding: 1.5rem; }
             .form-grid { grid-template-columns: 1fr; }

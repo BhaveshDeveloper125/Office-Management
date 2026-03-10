@@ -1,5 +1,18 @@
+<!-- ── HAMBURGER (mobile only) ── -->
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Open menu">
+    <i class="fa-solid fa-bars"></i>
+</button>
+
+<!-- ── OVERLAY (mobile only) ── -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <!-- ── SIDEBAR ── -->
-<div class="menu-area">
+<div class="menu-area" id="sidebarMenu">
+    <!-- close button inside sidebar (mobile) -->
+    <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+
     {{-- <div class="logo">attnd.</div> --}}
     <div class="menu-items">
         <a class="menu-item {{ request()->path() === 'admin' ? 'active' : '' }}" href="/"><i class="fa-solid fa-chart-bar" style="color:#6C63FF;width:18px;"></i> Dashboard</a>
@@ -20,4 +33,20 @@
         </form>
     </div>
 </div>
+
+<script>
+    (function () {
+        const toggle  = document.getElementById('sidebarToggle');
+        const close   = document.getElementById('sidebarClose');
+        const overlay = document.getElementById('sidebarOverlay');
+        const sidebar = document.getElementById('sidebarMenu');
+
+        function openSidebar()  { sidebar.classList.add('open');  overlay.classList.add('active'); }
+        function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('active'); }
+
+        toggle.addEventListener('click',  openSidebar);
+        close.addEventListener('click',   closeSidebar);
+        overlay.addEventListener('click', closeSidebar);
+    })();
+</script>
 

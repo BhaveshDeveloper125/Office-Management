@@ -103,18 +103,6 @@
         }
 
         .stat-value.loaded { animation: value-in 0.4s cubic-bezier(0.2,0.9,0.4,1) both; }
-
-        /* ── RESPONSIVE ── */
-        @media (max-width: 900px) {
-            .menu-area { width: 80px; }
-            .logo { font-size: 1.2rem; padding-left: 0.4rem; }
-            .content { padding: 1.5rem; }
-            .clock-pill { display: none; }
-        }
-
-        @media (max-width: 600px) {
-            .header-area { padding: 1rem 1.2rem; flex-wrap: wrap; gap: 0.8rem; }
-        }
     </style>
 </head>
 
