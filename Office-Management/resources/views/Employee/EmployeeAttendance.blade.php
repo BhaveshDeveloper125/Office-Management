@@ -394,7 +394,7 @@
     const lightBtn = document.querySelector('[data-theme="light"]');
     const darkBtn  = document.querySelector('[data-theme="dark"]');
 
-    function setTheme(theme) {
+    function setTheme(theme, notify = true) {
         if (theme === 'dark') {
             body.classList.add('dark');
             lightBtn.classList.remove('active');

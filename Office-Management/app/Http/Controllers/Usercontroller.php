@@ -142,12 +142,12 @@ class Usercontroller extends Controller
 
             $Update = User::where('email', $Validation['email'])->update(['password' => bcrypt($Validation['password'])]);
 
-            return redirect()->back()->with(['success' => 'Password is changed successfully.']);
+            return response()->json(['success' => 'Password is changed successfully.']);
         } catch (ValidationException $e) {
-            return redirect()->back()->with(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()]);
         } catch (Exception $e) {
             Log::info("Error in ChangePassword: " . $e);
-            return redirect()->back()->with(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()]);
         }
     }
 

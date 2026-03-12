@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Change Password • attnd.</title>
     <x-link />
 
@@ -209,9 +210,7 @@
 
                     <div class="divider"></div>
 
-                    <form action="/change_password" method="post">
-                        @csrf
-                        @method('PUT')
+                    <form id="changePasswordForm">
 
                         <!-- locked email -->
                         <input type="hidden" name="email" value="{{ $user->email }}">
@@ -354,6 +353,40 @@
 
     pwInput.addEventListener('input',      checkMatch);
     confirmInput.addEventListener('input', checkMatch);
+
+    /* ── CHANGE PASSWORD (fetch API) ── */
+    document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch('/change_password', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                },
+                body: JSON.stringify(data),
+            });
+            const result = await response.json();
+
+            if (response.ok) {
+                toastr.success(result.success || 'Password changed successfully!');
+                form.reset();
+                strengthFill.style.width = '0%';
+                strengthText.textContent = '—';
+                strengthText.style.color = 'var(--text-soft)';
+                matchHint.textContent = '';
+            } else {
+                toastr.error(result.error || 'Failed to change password');
+            }
+        } catch (err) {
+            toastr.error('Error: ' + err.message);
+        }
+    });
 </script>
 </body>
 </html>

@@ -516,7 +516,7 @@
     document.getElementById('add').addEventListener('click', async () => {
         const formData = new FormData(document.getElementById('WeekendHolidayForm'));
         try {
-            const res    = await fetch('/add_weekend', { method: 'POST', body: formData });
+            const res    = await fetch('/add_weekend', { method: 'POST', headers: { 'X-CSRF-TOKEN': csrf() }, body: formData });
             const result = await res.json();
             res.ok ? (GetWeekends(), toastr.success(result.success)) : toastr.error(result.error);
         } catch (e) { toastr.error(String(e)); }
@@ -527,7 +527,7 @@
         const formData = new FormData(document.getElementById('WeekendHolidayForm'));
         formData.append('_method', 'DELETE');
         try {
-            const res    = await fetch('/remove_weekend', { method: 'POST', body: formData });
+            const res    = await fetch('/remove_weekend', { method: 'POST', headers: { 'X-CSRF-TOKEN': csrf() }, body: formData });
             const result = await res.json();
             res.ok ? (GetWeekends(), toastr.success(result.success)) : toastr.error(result.error);
         } catch (e) { toastr.error(String(e)); }
@@ -565,7 +565,7 @@
     document.getElementById('add_holiday').addEventListener('click', async () => {
         const body = new FormData(document.getElementById('HolidayForm'));
         try {
-            const res    = await fetch('/set_holiday', { method: 'POST', body });
+            const res    = await fetch('/set_holiday', { method: 'POST', headers: { 'X-CSRF-TOKEN': csrf() }, body });
             const result = await res.json();
             res.ok ? (toastr.success(result.success), GetHoliday()) : toastr.error(result.error);
         } catch (e) { toastr.error(String(e)); }
@@ -576,7 +576,7 @@
         const body = new FormData(document.getElementById('HolidayForm'));
         body.append('_method', 'DELETE');
         try {
-            const res    = await fetch('/remove_holiday', { method: 'POST', body });
+            const res    = await fetch('/remove_holiday', { method: 'POST', headers: { 'X-CSRF-TOKEN': csrf() }, body });
             const result = await res.json();
             res.ok ? (toastr.success(result.success), GetHoliday()) : toastr.error(result.error);
         } catch (e) { toastr.error(String(e)); }

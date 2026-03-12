@@ -33,6 +33,9 @@ body {
     --toggle-bg: rgba(255, 255, 255, 0.4);
     --toggle-border: rgba(255, 255, 255, 0.6);
     --card-backdrop: blur(16px);
+    --input-bg: rgba(255, 255, 255, 0.6);
+    --input-border: rgba(0, 0, 0, 0.08);
+    --row-hover: rgba(108, 99, 255, 0.04);
 }
 
 /* Dark theme – deep, cosmic, with rich contrasts */
@@ -53,6 +56,9 @@ body.dark {
     --toggle-bg: rgba(30, 30, 50, 0.6);
     --toggle-border: rgba(255, 255, 255, 0.1);
     --card-backdrop: blur(20px);
+    --input-bg: rgba(30, 30, 50, 0.7);
+    --input-border: rgba(255, 255, 255, 0.08);
+    --row-hover: rgba(108, 99, 255, 0.08);
 }
 
 /* ── SHELL ── */
@@ -60,6 +66,19 @@ body.dark {
     display: flex;
     min-height: 100vh;
     width: 100%;
+}
+
+/* ── SELECT / OPTION dark-mode fix ── */
+select,
+select option {
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+}
+
+body.dark select,
+body.dark select option {
+    background-color: #1a1a2e;
+    color: #f0f0fd;
 }
 
 /* ── SIDEBAR ── */

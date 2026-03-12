@@ -550,6 +550,7 @@
         try {
             const response = await fetch('/search_employee', {
                 method: 'POST',
+                headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
                 body: new FormData(e.target),
             });
             const result = await response.json();
@@ -577,6 +578,7 @@
         try {
             const response = await fetch('/filter_employee', {
                 method: 'POST',
+                headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
                 body: new FormData(e.target),
             });
             const result = await response.json();

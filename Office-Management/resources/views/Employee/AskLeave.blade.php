@@ -479,6 +479,7 @@
         try {
             const response = await fetch('/create_leave', {
                 method: 'POST',
+                headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
                 body: new FormData(e.target),
             });
             const result = await response.json();
