@@ -331,7 +331,7 @@
 
             <!-- brand -->
             <div class="brand">
-                <div class="brand-logo">Company Name.</div>
+                <div class="brand-logo">Employee Attendance System</div>
                 <div class="brand-tagline">Employee Attendance Management</div>
             </div>
 
