@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Mail\LeaveRequest;
 use App\Models\Leave;
+use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 
 class LeaveObserver
@@ -13,11 +14,15 @@ class LeaveObserver
      */
     public function created(Leave $leave): void
     {
-        $to = $leave->user->email;
+        $superAdmins = User::role('Super Admin')->get();
+
         $subject = "Leave Request";
         $link = url('/emp_leave_management');
         $msg = "{$leave->user->name} applied for leave from {$leave->from} to {$leave->to} approve it <a href='{$link}'>Click Here</a>";
-        Mail::to($to)->send(new LeaveRequest($subject, $msg));
+
+        foreach ($superAdmins as $admin) {
+            Mail::to($admin->email)->send(new LeaveRequest($subject, $msg));
+        }
     }
 
     /**
