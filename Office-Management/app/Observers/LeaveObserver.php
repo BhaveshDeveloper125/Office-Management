@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Mail\LeaveApprove;
 use App\Mail\LeaveRequest;
+use App\Mail\RejectedMail;
 use App\Models\Leave;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
@@ -37,11 +38,11 @@ class LeaveObserver
             Mail::to($leave->user->email)->send(new LeaveApprove($subject, $msg));
         }
 
-        // if ($leave->status == false) {
-        //     $subject = "Leave Rejected";
-        //     $msg = "Your leave request has been rejected";
-        //     Mail::to($leave->user->email)->send(new LeaveApprove($subject, $msg));
-        // }
+        if ($leave->approve == config('LeavesVars.leave_approval.Rejected')) {
+            $subject = "Leave Rejected";
+            $msg = "Your leave request has been rejected";
+            Mail::to($leave->user->email)->send(new RejectedMail($subject, $msg));
+        }
     }
 
     /**

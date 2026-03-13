@@ -9,16 +9,19 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class Mail.Reject extends Mailable
+class RejectedMail extends Mailable
 {
     use Queueable, SerializesModels;
+    public $subject;
+    public $msg;
 
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($subject, $msg)
     {
-        //
+        $this->subject = $subject;
+        $this->msg = $msg;
     }
 
     /**
@@ -27,7 +30,7 @@ class Mail.Reject extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Mail. Reject',
+            subject: $this->subject,
         );
     }
 
@@ -37,7 +40,7 @@ class Mail.Reject extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'Mail.Reject',
         );
     }
 
