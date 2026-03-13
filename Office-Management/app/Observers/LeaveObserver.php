@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Mail\LeaveApprove;
 use App\Mail\LeaveRequest;
 use App\Models\Leave;
 use App\Models\User;
@@ -30,7 +31,17 @@ class LeaveObserver
      */
     public function updated(Leave $leave): void
     {
-        //
+        if ($leave->approve == config('LeavesVars.leave_approval.Approved')) {
+            $subject = "Leave Approved";
+            $msg = "Your leave request has been approved";
+            Mail::to($leave->user->email)->send(new LeaveApprove($subject, $msg));
+        }
+
+        // if ($leave->status == false) {
+        //     $subject = "Leave Rejected";
+        //     $msg = "Your leave request has been rejected";
+        //     Mail::to($leave->user->email)->send(new LeaveApprove($subject, $msg));
+        // }
     }
 
     /**
