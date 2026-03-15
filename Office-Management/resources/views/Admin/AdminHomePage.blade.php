@@ -184,7 +184,7 @@
                 <div class="stat-card">
                     <div class="stat-inner">
                         <div class="stat-label">Requested Leaves</div>
-                        <span class="stat-value" id="requestedLeaves">—</span>
+                        <span class="stat-value" id="requestedLeaves" style="background: none; -webkit-text-fill-color: #FF4C60; color: #FF4C60;">—</span>
                     </div>
                 </div>
 
