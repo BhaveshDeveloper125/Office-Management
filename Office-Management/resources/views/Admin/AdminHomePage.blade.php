@@ -181,6 +181,13 @@
                     </div>
                 </div>
 
+                <div class="stat-card">
+                    <div class="stat-inner">
+                        <div class="stat-label">Requested Leaves</div>
+                        <span class="stat-value" id="requestedLeaves">—</span>
+                    </div>
+                </div>
+
             </div>
         </div><!-- /content -->
     </div><!-- /main -->
@@ -237,7 +244,7 @@
     async function GetCardDetails() {
         try {
             const response = await fetch('/admin_cards_data');
-            const data     = await response.json();
+            const data     = await response.json();console.log(data);
 
             if (response.ok) {
                 // staggered reveal
@@ -249,6 +256,7 @@
                     ['absentEmp',     data.absentToday],
                     ['earlyLeaveEmp', data.earlyLeave],
                     ['holidayEmp',    data.overallHoliday],
+                    ['requestedLeaves', data.requestedLeaves],
                 ];
 
                 entries.forEach(([id, val], i) => {

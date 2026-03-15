@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\Holiday;
+use App\Models\Leave;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -36,7 +37,8 @@ class AdminHomePageController extends Controller
                     return $today->diffInDays($to) + 1;
                 }
             });
-            return response()->json(['totalEmp' => $totalEmp, 'presentToday' => $presentToday, 'lateToday' => $lateToday, 'leaveToday' => $leaveToday, 'absentToday' => $absentToday, 'earlyLeave' => $earlyLeave, 'overallHoliday' => $overallHoliday]);
+            $requestedLeaves = Leave::where('approve', null)->count();
+            return response()->json(['totalEmp' => $totalEmp, 'presentToday' => $presentToday, 'lateToday' => $lateToday, 'leaveToday' => $leaveToday, 'absentToday' => $absentToday, 'earlyLeave' => $earlyLeave, 'overallHoliday' => $overallHoliday , 'requestedLeaves' => $requestedLeaves]);
         } catch (Exception $e) {
             logger("Error in Cards In AdminHomePageController : " . $e);
             return response()->json(['error' => $e->getMessage()]);
