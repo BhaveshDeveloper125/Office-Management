@@ -17,12 +17,12 @@ class InitialData extends Seeder
     public function run(): void
     {
         $SuperAdmin = Role::create(['name' => 'Super Admin']);
-        $SubAdmin = Role::create(['name' => 'Sub Admin']);
+        // $SubAdmin = Role::create(['name' => 'Sub Admin']);
         $Employee = Role::create(['name' => 'Employee']);
 
         $user = User::create([
             'name' => 'Admin',
-            'email' => 'admin@mail.com',
+            'email' => 'adityadabhi04@gmail.com',
             'post' => 'Admin',
             'mobile' => '9773400215',
             'qualification' => 'Admin',
