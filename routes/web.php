@@ -30,30 +30,71 @@ Route::post('/login', [Usercontroller::class, 'Login'])->name('login');
 Route::middleware(AuthcheckMiddleware::class)->group(function () {
 
     Route::get('/roles', [RoleController::class, 'GetRoles'])->name('roles');
-    Route::get('/emp_list', [Usercontroller::class, 'GetEmpList'])->name('emp_list');
-    Route::get('/weekend', [WeeklyHolidayController::class, 'GetWeekends']);
-    Route::get('/holidays', [HolidayController::class, 'GetHoliday']);
-    Route::get('/emp/history', [AttendanceController::class, 'EmpHistory']);
-    Route::get('/current_month_attendace_summary', [AttendanceController::class, 'CurrentMonthAttendanceReport']);
-    Route::get('/current_month_holiday', [HolidayController::class, 'GetCurrentMonthHolidayCount']);
-    Route::get('/current_month_workin_days', [EmployeeHomePageController::class, 'CurrentMonthWorkingDays']);
-    Route::get('/late_checkouts', [AttendanceController::class, 'LateCheckOutList']);
-    Route::get('/getempleave', [LeaveController::class, 'GetEmpLeaves'])->name('GetEmpLeaves');
-    Route::get('/employee_attendance_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
-    Route::get('/employee_late_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
-    Route::get('/employee_early_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
-    Route::get('/employee_absent_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
-    Route::get('/employee_overtime_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
-    Route::get('/employee_holiday_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
-    Route::get('/employee_workingdays_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
-    Route::get('/employee_remainingworkingdays_data',[EmployeeHomePageController::class, 'GetAttendanceData']);
+
+    Route::controller(Usercontroller::class)->group(function(){
+        Route::get('/emp_list', 'GetEmpList')->name('emp_list');
+        Route::post('/registration', 'Register')->name('register');
+        Route::post('/filter_employee', 'FilterEmpList')->name('FilterEmployee');
+        Route::post('/search_employee', 'SearchEmp')->name('SearchEmployee');
+        Route::post('/logout', 'Logout')->name('logout');
+        Route::put('/update_emp_details', 'UpdateEmp')->name('UpdateEmpDetails');
+        Route::put('/change_password', 'ChangePassword')->name('ChangePassword');
+        Route::put('/update_user', 'UpdateUser')->name('UpdateUser');
+        Route::delete('/delete_employee', 'DeleteEmployee')->name('DeleteEmployee');
+    });
+    
+    Route::controller(WeeklyHolidayController::class)->group(function(){
+        Route::get('/weekend', 'GetWeekends');
+        Route::post('/add_weekend', 'AddWeekend');
+        Route::delete('/remove_weekend', 'RemoveWeekends');
+    });
+
+    Route::controller(HolidayController::class)->group(function(){
+        Route::get('/holidays', 'GetHoliday');
+        Route::get('/current_month_holiday', 'GetCurrentMonthHolidayCount');
+        Route::post('/set_holiday', 'AddHoliday');
+        Route::delete('/remove_holiday', 'RemoveHoliday');
+    });
+
+    Route::controller(AttendanceController::class)->group(function(){
+        Route::get('/emp/history', 'EmpHistory');
+        Route::get('/current_month_attendace_summary', 'CurrentMonthAttendanceReport');
+        Route::get('/late_checkouts', 'LateCheckOutList');
+        Route::get('/emp_attendances','EmpAttendanceHistory');
+        Route::get('/admin/daily_attendance','DailyAttendance');
+        Route::post('/checkin', 'CheckIn')->name('CheckIn');
+        Route::post('/checkout', 'CheckOut')->name('CheckOut');
+        Route::post('/after_checkouts', 'AfterCheckouts')->name('AfterCheckouts');
+        Route::post('/filter_emp_history', 'FilterHistory');
+    });
+
+    Route::controller(EmployeeHomePageController::class)->group(function(){
+        Route::get('/current_month_workin_days', 'CurrentMonthWorkingDays');
+        Route::get('/employee_attendance_data','GetAttendanceData');
+        Route::get('/employee_late_data','GetAttendanceData');
+        Route::get('/employee_early_data','GetAttendanceData');
+        Route::get('/employee_absent_data','GetAttendanceData');
+        Route::get('/employee_overtime_data','GetAttendanceData');
+        Route::get('/employee_holiday_data','GetAttendanceData');
+        Route::get('/employee_workingdays_data','GetAttendanceData');
+        Route::get('/employee_remainingworkingdays_data','GetAttendanceData');
+        Route::post('/attendance_data', 'GetAttendanceData');
+    });
+
+    Route::controller(LeaveController::class)->group(function(){
+        Route::get('/getempleave', 'GetEmpLeaves')->name('GetEmpLeaves');
+        Route::get('/admin/leaves/pending','GetAllLeaves');
+        Route::get('/admin/leaves/approved','GetAllLeaves');
+        Route::get('/admin/leaves/rejected','GetAllLeaves');
+        Route::get('/admin/leaves/history','GetAllLeaves');
+        Route::post('/create_leave', 'CreateLeave')->name('CreateLeave');
+        Route::post('/admin/leavesaction', 'UpdateLeaveStatus')->name('UpdateLeaveStatus');
+    });
+
+
     Route::get('/admin_cards_data',[AdminHomePageController::class, 'Cards']);
-    Route::get('/emp_attendances',[AttendanceController::class, 'EmpAttendanceHistory']);
-    Route::get('/admin/leaves/pending',[LeaveController::class, 'GetAllLeaves']);
-    Route::get('/admin/leaves/approved',[LeaveController::class, 'GetAllLeaves']);
-    Route::get('/admin/leaves/rejected',[LeaveController::class, 'GetAllLeaves']);
-    Route::get('/admin/leaves/history',[LeaveController::class, 'GetAllLeaves']);
-    Route::get('/admin/daily_attendance',[AttendanceController::class, 'DailyAttendance']);
+
+
 
     Route::get('/edit_employee/{user}', function (User $user) {
         return view('Admin.EditEmployee', ['user' => $user]);
@@ -62,30 +103,7 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::get('/edit_password/{user}', function (User $user) {
         return view('Admin.ChangePassword', ['user' => $user]);
     });
-
-
-    Route::post('/registration', [Usercontroller::class, 'Register'])->name('register');
-    Route::post('/filter_employee', [Usercontroller::class, 'FilterEmpList'])->name('FilterEmployee');
-    Route::post('/search_employee', [Usercontroller::class, 'SearchEmp'])->name('SearchEmployee');
-    Route::post('/add_weekend', [WeeklyHolidayController::class, 'AddWeekend']);
-    Route::post('/set_holiday', [HolidayController::class, 'AddHoliday']);
-    Route::post('/checkin', [AttendanceController::class, 'CheckIn'])->name('CheckIn');
-    Route::post('/checkout', [AttendanceController::class, 'CheckOut'])->name('CheckOut');
-    Route::post('/after_checkouts', [AttendanceController::class, 'AfterCheckouts'])->name('AfterCheckouts');
-    Route::post('/filter_emp_history', [AttendanceController::class, 'FilterHistory']);
-    Route::post('/create_leave', [LeaveController::class, 'CreateLeave'])->name('CreateLeave');
-    Route::post('/attendance_data', [EmployeeHomePageController::class, 'GetAttendanceData']);
-    Route::post('/admin/leavesaction', [LeaveController::class, 'UpdateLeaveStatus'])->name('UpdateLeaveStatus');
-
-    Route::post('/logout', [Usercontroller::class, 'Logout'])->name('logout');
-
-    Route::put('/update_emp_details', [Usercontroller::class, 'UpdateEmp'])->name('UpdateEmpDetails');
-    Route::put('/change_password', [Usercontroller::class, 'ChangePassword'])->name('ChangePassword');
-    Route::put('/update_user', [Usercontroller::class, 'UpdateUser'])->name('UpdateUser');
-
-    Route::delete('/delete_employee', [Usercontroller::class, 'DeleteEmployee'])->name('DeleteEmployee');
-    Route::delete('/remove_weekend', [WeeklyHolidayController::class, 'RemoveWeekends']);
-    Route::delete('/remove_holiday', [HolidayController::class, 'RemoveHoliday']);
+    
 
     // Route::view('/admin', 'Admin.AdminHomePage')->middleware('role:Super Admin');
     Route::view('/admin', 'Admin.AdminHomePage');
