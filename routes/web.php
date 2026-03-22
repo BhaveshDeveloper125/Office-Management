@@ -94,6 +94,7 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
 
     Route::controller(UserLeaveController::class)->group(function(){
         Route::get('/user_leave','GetLeaveRecord');
+        Route::put('/apply_pay_on_previous_leave' , 'ApplyPayOnLeave');
     });
 
     Route::get('/edit_employee/{user}', function (User $user) {

@@ -10,7 +10,9 @@ class UserLeave extends Model
     protected $fillable = [
         'user_id',
         'leaves',
-        'year'
+        'year',
+        'paid_leave',
+        'pay_request',
     ];
 
     public function user()

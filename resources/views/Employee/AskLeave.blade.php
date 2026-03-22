@@ -527,6 +527,26 @@
                 <div class="pagination" id="paginationContainer"></div>
             </div>
 
+
+            <div class="section-header">Apply for the Pay Leave</div>
+            <div class="glass-card table-card" id="">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th>Leave</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payleaveTable">
+                            <tr class="empty-row"><td colspan="7">Loading your leave requests…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="payLeavePaginationContainer"></div>
+            </div>
+
         </div><!-- /content -->
     </div><!-- /main -->
 </div><!-- /app -->
@@ -723,26 +743,82 @@
         container.appendChild(make('»', () => GetEmpLeaves(meta.last_page), false, false));
     }
 
-    async function GetLeaveRecords()
-    {
+    async function GetLeaveRecords() {
         try {
-         const response = await fetch('/user_leave');   
-         const result = await response.json();
+            const response = await fetch('/user_leave');
+            const result = await response.json();
 
-         if (!response.ok) {
-            toastr.error(result.error);
-         }else{            
+            if (!response.ok) {
+                toastr.error(result.error);
+                return;
+            }
+
+            // Current leave
             let CurrentLeave = document.querySelector('#currentLeave');
-            CurrentLeave.textContent = '';
             CurrentLeave.textContent = result.currentLeaves.leaves;
 
+            // Previous leave total
             let previousLeave = document.querySelector('#previousLeave');
-            previousLeave.textContent = '';
             previousLeave.textContent = result.previousYeasrLeave;
-         }
+
+            // Previous leave table
+            let previousLeaveList = result.previousYeasrLeaveList;
+            let payleaveTable = document.querySelector('#payleaveTable');
+            payleaveTable.innerHTML = '';
+
+            if (!previousLeaveList.length) {
+                payleaveTable.innerHTML = '<tr class="empty-row"><td colspan="3">No previous leave records found.</td></tr>';
+                return;
+            }
+
+            previousLeaveList.forEach(i => {
+                const isApplied = i.pay_request === null; // ✅ null means Applied
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${i.year_extracted}</td>
+                    <td style="${isApplied ? 'color: #FF4C60; font-weight: 600;' : ''}">
+                        ${i.leaves} ${isApplied ? '<span style="font-size:0.78rem;">(Applied)</span>' : ''}
+                    </td>
+                    <td>
+                        <button class="approve-btn" onclick="applyPayLeave(${i.id})" 
+                            ${isApplied ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}>
+                            <i class="fa-solid fa-money-bill" style="color:#fff;"></i> 
+                            ${isApplied ? 'Already Applied' : 'Apply for Pay'}
+                        </button>
+                    </td>
+                `;
+                payleaveTable.appendChild(tr);
+            });
 
         } catch (e) {
-            toastr.error("API fetch error : " , e);            
+            toastr.error("API fetch error: " + e.message);
+        }
+    }
+
+    async function applyPayLeave(leaveId) {
+        if (!confirm('Are you sure you want to apply for pay leave for this year?')) return;
+
+        try {
+            const res = await fetch('/apply_pay_on_previous_leave', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ id: leaveId }),
+            });
+
+            const result = await res.json();
+
+            if (res.ok) {
+                toastr.success(result.success || 'Pay leave applied successfully!');
+                GetLeaveRecords(); // refresh the table
+            } else {
+                toastr.error(result.error || 'Something went wrong.');
+            }
+
+        } catch (e) {
+            toastr.error(String(e));
         }
     }
 

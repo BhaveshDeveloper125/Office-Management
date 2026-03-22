@@ -20,6 +20,9 @@ return new class extends Migration
             $table->integer('year_extracted')->virtualAs('YEAR(year)'); //This is virtual column which is not the real column , its value are calculated from the year column
             $table->unique(['user_id', 'year_extracted']); //Unique constrained is applied on the user_id and year_extracted , in all row both combine value must be unique
 
+            $table->tinyInteger('paid_leave')->default(0); //total number of previous leave getting paid for
+            $table->boolean('pay_request')->default(false)->nullable(); //Default it will stay false , when employee asks for the payment it will be null then if approved then true and not approved then false.
+
             $table->timestamps();
         });
     }
