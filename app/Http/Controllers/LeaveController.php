@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Leave;
+use App\Models\UserLeave;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +33,13 @@ class LeaveController extends Controller
 
             if ($leave) {
                 return response()->json(['error' => 'Leave already exists between the selected time duration.'], 422);
+            }
+
+            $availableLeave = UserLeave::where('user_id',Auth::id())->sum('leaves');
+            $askedLeave = Carbon::parse($from)->diffInDays(Carbon::parse($to));
+
+            if ($askedLeave > $availableLeave) {
+                return response()->json(['error' => 'you dont have enough leave credits'],422);
             }
 
             Leave::create($validated);

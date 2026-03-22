@@ -58,6 +58,97 @@
 
         .glass-card:hover::before { opacity: 1; }
 
+        /* ── STAT CARDS GRID ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 1100px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 700px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: var(--card-backdrop);
+            border: 1px solid var(--card-border);
+            box-shadow: var(--card-shadow);
+            border-radius: 36px;
+            padding: 1.6rem 1.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(800px circle at var(--x, 50%) var(--y, 0%), rgba(255, 255, 255, 0.15), transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            border-radius: inherit;
+        }
+
+        .stat-card:hover::before { opacity: 1; }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: #FF4C6040;
+            box-shadow: 0 40px 70px -20px rgba(255, 76, 96, 0.3), var(--card-shadow);
+        }
+
+        /* Accent dots */
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .stat-card:nth-child(1)::after { background: #FF4C60; }
+        .stat-card:nth-child(2)::after { background: #6C63FF; }
+        .stat-card:nth-child(3)::after { background: #4ECDC4; }
+        .stat-card:nth-child(4)::after { background: #FDCB6E; }
+        .stat-card:nth-child(5)::after { background: #F91179; }
+        .stat-card:nth-child(6)::after { background: #6C63FF; }
+        .stat-card:nth-child(7)::after { background: #4ECDC4; }
+        .stat-card:nth-child(8)::after { background: #FF4C60; }
+
+        .stat-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-soft);
+            margin-bottom: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .stat-value {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 2.4rem;
+            font-weight: 700;
+            background: var(--stat-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
         /* ── FORM CARD ── */
         .form-card { padding: 2.5rem 2.8rem; }
 
@@ -293,9 +384,18 @@
             font-style: italic;
         }
 
+        /* ── SECTION TITLE ── */
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 900px) {
-            /* .menu-area handled by common.css */
             .logo { font-size: 1.2rem; padding-left: 0.4rem; }
             .content { padding: 1.5rem; }
             .form-grid { grid-template-columns: 1fr; }
@@ -328,6 +428,19 @@
 
         <!-- content -->
         <div class="content">
+
+            <!-- STAT CARDS -->
+            {{-- <p class="section-title">This Month's Overview</p> --}}
+            <div class="stats-grid">
+                <a class="stat-card" href="#">
+                    <div class="stat-label">Current Leave</div>
+                    <div class="stat-value" id="currentLeave">—</div>
+                </a>
+                <a class="stat-card" href="#">
+                    <div class="stat-label">Previous Leave</div>
+                    <div class="stat-value" id="previousLeave">—</div>
+                </a>
+            </div>
 
             <!-- form card -->
             <div class="section-header">New Leave Request</div>
@@ -439,7 +552,18 @@
     darkBtn.addEventListener('click', () => setTheme('dark'));
     setTheme(localStorage.getItem('theme') || 'light', false);
 
-    /* ── MOUSE GLOW ── */
+    /* ── MOUSE GLOW on stat cards ── */
+    document.querySelectorAll('.stat-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top)  / rect.height) * 100;
+            card.style.setProperty('--x', x + '%');
+            card.style.setProperty('--y', y + '%');
+        });
+    });
+
+    /* ── MOUSE GLOW on glass cards ── */
     ['formCard', 'tableCard'].forEach(id => {
         const el = document.getElementById(id);
         el.addEventListener('mousemove', e => {
@@ -464,6 +588,36 @@
 
     function calcDays(from, to) {
         return Math.round((new Date(to) - new Date(from)) / (1000*60*60*24)) + 1;
+    }
+
+    /* ── LOAD STAT CARDS ── */
+    async function loadStats() {
+        try {
+            const r = await fetch('/current_month_attendace_summary');
+            const d = await r.json();
+            if (!r.ok) { toastr.error(d); return; }
+            ['attendance', 'late', 'early', 'absent', 'overtime'].forEach(k => {
+                const el = document.getElementById(k);
+                if (el && d[k] !== undefined) el.textContent = d[k];
+            });
+        } catch (e) {
+            toastr.error('API Error: ' + e.message);
+        }
+
+        try {
+            const r = await fetch('/current_month_holiday');
+            const d = await r.json();
+            if (r.ok) document.getElementById('holiday').textContent = d.holiday ?? '—';
+        } catch (e) {}
+
+        try {
+            const r = await fetch('/current_month_workin_days');
+            const d = await r.json();
+            if (r.ok) {
+                document.getElementById('workingdays').textContent = d.currentworkingdays ?? '—';
+                document.getElementById('remainingworkingdays').textContent = d.remainingdays ?? '—';
+            }
+        } catch (e) {}
     }
 
     /* ── SUBMIT LEAVE ── */
@@ -569,7 +723,34 @@
         container.appendChild(make('»', () => GetEmpLeaves(meta.last_page), false, false));
     }
 
-    document.addEventListener('DOMContentLoaded', () => GetEmpLeaves(1));
+    async function GetLeaveRecords()
+    {
+        try {
+         const response = await fetch('/user_leave');   
+         const result = await response.json();
+
+         if (!response.ok) {
+            toastr.error(result.error);
+         }else{            
+            let CurrentLeave = document.querySelector('#currentLeave');
+            CurrentLeave.textContent = '';
+            CurrentLeave.textContent = result.currentLeaves.leaves;
+
+            let previousLeave = document.querySelector('#previousLeave');
+            previousLeave.textContent = '';
+            previousLeave.textContent = result.previousYeasrLeave;
+         }
+
+        } catch (e) {
+            toastr.error("API fetch error : " , e);            
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadStats();
+        GetEmpLeaves(1);
+        GetLeaveRecords();
+    });
 </script>
 </body>
 </html>

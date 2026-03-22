@@ -7,6 +7,9 @@ use App\Mail\LeaveRequest;
 use App\Mail\RejectedMail;
 use App\Models\Leave;
 use App\Models\User;
+use App\Models\UserLeave;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class LeaveObserver
@@ -33,6 +36,25 @@ class LeaveObserver
     public function updated(Leave $leave): void
     {
         if ($leave->approve == config('LeavesVars.leave_approval.Approved')) {
+
+            $leaveRecords = UserLeave::where('user_id', $leave->user_id)->orderBy('year_extracted', 'desc')->get();
+
+            $askedLeave = Carbon::parse($leave->from)->diffInDays(Carbon::parse($leave->to)) + 1;
+
+            logger($askedLeave);
+
+            foreach ($leaveRecords as $i) {
+                if ($askedLeave <= 0) break;
+                if ($i->leaves >= $askedLeave) {
+                    $i->leaves -= $askedLeave;
+                    $i->save();
+                    $askedLeave = 0;                  
+                } else {
+                    $askedLeave -= $i->leaves;
+                    $i->leaves = 0;
+                    $i->save();
+                }
+            }
             $subject = "Leave Approved";
             $msg = "Your leave request has been approved";
             Mail::to($leave->user->email)->send(new LeaveApprove($subject, $msg));

@@ -26,8 +26,6 @@ class Usercontroller extends Controller
             $user->assignRole($Role);
 
             return response()->json(['success' => 'User Registered Successfully']);
-        } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
         } catch (Exception $e) {
             Log::info("Error in User Register: " . $e);
             return response()->json(['error' => $e->getMessage()], 500);
@@ -49,7 +47,7 @@ class Usercontroller extends Controller
             }
         } catch (Exception $e) {
             Log::info("Error in Login from Usercontroller: " . $e);
-            return response()->json(['error' => $e->getMessage()], 500);
+            return redirect()->back()->with(['error' => $e->getMessage()], 500);
         }
     }
 

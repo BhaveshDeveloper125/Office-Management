@@ -4,6 +4,9 @@ namespace App\Observers;
 
 use App\Mail\WelcomeMail;
 use App\Models\User;
+use App\Models\UserLeave;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class UserObserver
@@ -17,6 +20,9 @@ class UserObserver
         $subject="Welcome to Employee Attendance System";
         $msg="Dear $user->name, Welcome to Employee Attendance System";
         Mail::to($to)->send(new WelcomeMail($subject, $msg));
+
+        $userLeave = UserLeave::create(['user_id' => $user->id,'leaves' => 12 - Carbon::now()->month + 1 , 'year' => Carbon::now()]);
+        logger($userLeave);
     }
 
     /**

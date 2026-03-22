@@ -24,7 +24,7 @@ class UserValidationRequest extends FormRequest
         if ($this->isMethod('post') && $this->is('registration')) {
             return [
                 'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users',
+                'email' => 'required|string|email|max:255|unique:users,email',
                 'password' => 'required|string|min:8|confirmed',
                 'post' => 'required|string|max:255',
                 'mobile' => 'sometimes|numeric|digits:10|unique:users,mobile',

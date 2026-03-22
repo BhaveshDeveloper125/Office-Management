@@ -7,6 +7,7 @@ use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\Usercontroller;
+use App\Http\Controllers\UserLeaveController;
 use App\Http\Controllers\WeeklyHolidayController;
 use App\Http\Middleware\AuthcheckMiddleware;
 use App\Models\User;
@@ -91,10 +92,9 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
         Route::post('/admin/leavesaction', 'UpdateLeaveStatus')->name('UpdateLeaveStatus');
     });
 
-
-    Route::get('/admin_cards_data',[AdminHomePageController::class, 'Cards']);
-
-
+    Route::controller(UserLeaveController::class)->group(function(){
+        Route::get('/user_leave','GetLeaveRecord');
+    });
 
     Route::get('/edit_employee/{user}', function (User $user) {
         return view('Admin.EditEmployee', ['user' => $user]);
@@ -104,6 +104,9 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
         return view('Admin.ChangePassword', ['user' => $user]);
     });
     
+    
+    Route::get('/admin_cards_data',[AdminHomePageController::class, 'Cards']);
+
 
     // Route::view('/admin', 'Admin.AdminHomePage')->middleware('role:Super Admin');
     Route::view('/admin', 'Admin.AdminHomePage');

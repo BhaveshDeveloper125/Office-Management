@@ -406,18 +406,28 @@
         e.preventDefault();
         const form = document.getElementById('AddEmployeeForm');
         const formData = new FormData(form);
-        const csrfToken = document.querySelector('input[name="_token"]')?.value
-            || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        const csrfToken = document.querySelector('input[name="_token"]')?.value 
+                    || document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') 
+                    || '';
 
         try {
             const response = await fetch('/registration', {
                 method: 'POST',
-                headers: { 'X-CSRF-TOKEN': csrfToken },
+                headers: { 'X-CSRF-TOKEN': csrfToken , 'Accept': 'application/json',},
                 body: formData,
             });
 
             const result = await response.json();
 
+            /* ── VALIDATION ERRORS (422) ── */
+            if (response.status === 422) {
+                Object.values(result.errors).forEach(messages => {
+                    messages.forEach(msg => toastr.error(msg));
+                });
+                return;
+            }
+
+            /* ── OTHER ERRORS ── */
             if (!response.ok) {
                 toastr.error(result.error || 'Failed to add employee');
                 return;
@@ -427,7 +437,7 @@
             form.reset();
 
         } catch (err) {
-            toastr.error(String(err));
+            toastr.error('Something went wrong: ' + err.message);
         }
     }
 
