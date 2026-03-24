@@ -250,6 +250,7 @@
                                     <th>Post</th>
                                     <th>Mobile</th>
                                     <th>Leave</th>
+                                    <th>Year</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -335,6 +336,7 @@
                     <td><span class="post-badge">${i.user.post}</span></td>
                     <td class="mono-cell">${i.user.mobile}</td>
                     <td><span class="days-num">${i.leaves}</span></td>
+                    <td class="mono-cell">${i.year_extracted}</td>
                     <td>
                         <button class="approve-btn" onclick="approvePayLeave(${i.id})">
                             <i class="fa-solid fa-check" style="color:#2ecc71;"></i> Approve

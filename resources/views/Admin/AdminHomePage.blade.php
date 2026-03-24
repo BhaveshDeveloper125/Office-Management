@@ -188,6 +188,14 @@
                     </div>
                 </div>
 
+                <div class="stat-card">
+                    <div class="stat-inner">
+                        <div class="stat-label">Paye Leave Request</div>
+                        <span class="stat-value" id="payLeavesRequest" style="background: none; -webkit-text-fill-color: #FF4C60; color: #FF4C60;">—</span>
+                    </div>
+                </div>
+
+
             </div>
         </div><!-- /content -->
     </div><!-- /main -->
@@ -257,6 +265,7 @@
                     ['earlyLeaveEmp', data.earlyLeave],
                     ['holidayEmp',    data.overallHoliday],
                     ['requestedLeaves', data.requestedLeaves],
+                    ['payLeavesRequest', data.payLeave],
                 ];
 
                 entries.forEach(([id, val], i) => {

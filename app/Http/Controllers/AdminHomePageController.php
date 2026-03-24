@@ -6,6 +6,7 @@ use App\Models\Attendance;
 use App\Models\Holiday;
 use App\Models\Leave;
 use App\Models\User;
+use App\Models\UserLeave;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -38,7 +39,8 @@ class AdminHomePageController extends Controller
                 }
             });
             $requestedLeaves = Leave::where('approve', null)->count();
-            return response()->json(['totalEmp' => $totalEmp, 'presentToday' => $presentToday, 'lateToday' => $lateToday, 'leaveToday' => $leaveToday, 'absentToday' => $absentToday, 'earlyLeave' => $earlyLeave, 'overallHoliday' => $overallHoliday , 'requestedLeaves' => $requestedLeaves]);
+            $payLeave = UserLeave::where('pay_request' , null)->count();
+            return response()->json(['totalEmp' => $totalEmp, 'presentToday' => $presentToday, 'lateToday' => $lateToday, 'leaveToday' => $leaveToday, 'absentToday' => $absentToday, 'earlyLeave' => $earlyLeave, 'overallHoliday' => $overallHoliday , 'requestedLeaves' => $requestedLeaves , 'payLeave' => $payLeave]);
         } catch (Exception $e) {
             logger("Error in Cards In AdminHomePageController : " . $e);
             return response()->json(['error' => $e->getMessage()]);

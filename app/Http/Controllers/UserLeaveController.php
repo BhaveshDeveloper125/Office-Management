@@ -48,9 +48,9 @@ class UserLeaveController extends Controller
     public function AppliedLeaveList()
     {
         try {
-            $appliedLeaves = UserLeave::with('user')->where('pay_request', false)
-                ->whereHas('user', function ($query) {
-                $query->role('Employee');
+            $appliedLeaves = UserLeave::with('user')->where('pay_request', null)
+                ->whereHas('user', function ($i) {
+                $i->role('Employee');
                 })->get();
             return response()->json(['appliedLeaves' => $appliedLeaves]);
         } catch (Exception $e) {
