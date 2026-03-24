@@ -25,6 +25,7 @@ Route::get('/', function () {
     return redirect()->route('Login Page');
 });
 
+Route::view('/forgot_password' , 'Employee.ForgotPassword')->name('forgotPassword');
 Route::view('/login_page', 'Login')->name('Login Page');
 Route::post('/login', [Usercontroller::class, 'Login'])->name('login');
 

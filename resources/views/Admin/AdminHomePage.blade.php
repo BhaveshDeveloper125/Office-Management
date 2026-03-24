@@ -194,8 +194,7 @@
                         <span class="stat-value" id="payLeavesRequest" style="background: none; -webkit-text-fill-color: #FF4C60; color: #FF4C60;">—</span>
                     </div>
                 </div>
-
-
+                
             </div>
         </div><!-- /content -->
     </div><!-- /main -->

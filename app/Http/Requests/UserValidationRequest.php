@@ -66,6 +66,10 @@ class UserValidationRequest extends FormRequest
                 'experience' => 'sometimes|numeric',
                 'address' => 'sometimes|string|max:255',
             ];
+        }elseif ($this->routeIs('forgotPassword') && $this->method('PUT')) {
+            return [
+                'email' => 'required|email|exists:users,email'
+            ];
         }
         return [];
     }

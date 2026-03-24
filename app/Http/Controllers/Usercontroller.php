@@ -162,6 +162,16 @@ class Usercontroller extends Controller
         }
     }
 
+    public function ForgotPassword(UserValidationRequest $request)
+    {
+        try {
+            //code...
+        } catch (Exception $e) {
+            logger("Error in ForgotPassword from Usercontroller : " . $e);
+            return response()->json(['status' => false , 'message' => 'Password update request is not sent'],500);
+        }
+    }
+
     public function Logout(Request $request)
     {
         try {

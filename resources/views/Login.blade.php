@@ -314,6 +314,23 @@
             .login-card { padding: 2.2rem 1.8rem; }
             .brand-logo { font-size: 2rem; }
         }
+
+        /* ── FORGOT PASSWORD ── */
+        .forgot-link {
+            display: block;
+            text-align: right;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-soft);
+            text-decoration: none;
+            margin-top: 0.5rem;
+            letter-spacing: 0.3px;
+            transition: color 0.2s ease;
+        }
+
+        .forgot-link:hover {
+            color: #6C63FF;
+        }
     </style>
 </head>
 
@@ -370,6 +387,10 @@
                         <i class="fa-solid fa-eye" id="togglePassword"></i>
                     </div>
                 </div>
+
+                <a href="/forgot_password" class="forgot-link">
+                    Forgot password ?
+                </a>
 
                 <button type="submit" class="login-btn" id="loginBtn">→ Sign In</button>
 
