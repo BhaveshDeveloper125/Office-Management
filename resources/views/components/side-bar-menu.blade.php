@@ -20,8 +20,9 @@
         <a class="menu-item {{ request()->is('emp_details') ? 'active' : '' }}" href="/emp_details"><i class="fa-solid fa-users" style="color:#FDCB6E;width:18px;"></i> Employees</a>
         <a class="menu-item {{ request()->is('add_emp') ? 'active' : '' }}" href="/add_emp"><i class="fa-solid fa-user-plus" style="color:#4ECDC4;width:18px;"></i> Add New Employee</a>
         <a class="menu-item {{ request()->is('admin/search_emp') ? 'active' : '' }}" href="/admin/search_emp"><i class="fa-solid fa-magnifying-glass" style="color:#6C63FF;width:18px;"></i> Search Employee</a>
-        <a class="menu-item {{ request()->is('manage_holiday') ? 'active' : '' }}" href="/manage_holiday"><i class="fa-solid fa-umbrella-beach" style="color:#FF4C60;width:18px;"></i> Holidays</a>
-        <a class="menu-item {{ request()->is('emp_leave_management') ? 'active' : '' }}" href="/emp_leave_management"><i class="fa-solid fa-calendar-minus" style="color:#2ecc71;width:18px;"></i> Leaves</a>
+        <a class="menu-item {{ request()->is('manage_holiday') ? 'active' : '' }}" href="/manage_holiday"><i class="fa-solid fa-umbrella-beach" style="color:#2ecc71;width:18px;"></i> Holidays</a>
+        <a class="menu-item {{ request()->is('emp_leave_management') ? 'active' : '' }}" href="/emp_leave_management"><i class="fa-solid fa-calendar-minus" style="color:#FF4C60;width:18px;"></i> Leaves</a>
+        <a class="menu-item {{ request()->is('pay_leave') ? 'active' : '' }}" href="/pay_leave"><i class="fa-solid fa-money-bill-wave" style="color:#00ff6a;width:18px;"></i> Pay Leaves</a>
         {{-- <a class="menu-item" href="/emp_overtime_checkout"><i class="fa-solid fa-clock" style="color:#FDCB6E;width:18px;"></i> Overtime</a> --}}
         {{-- <a class="menu-item" href="/settings"><i class="fa-solid fa-gear" style="color:#7b8395;width:18px;"></i> Settings</a> --}}
         <form action="/logout" method="post"

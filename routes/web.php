@@ -94,7 +94,11 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
 
     Route::controller(UserLeaveController::class)->group(function(){
         Route::get('/user_leave','GetLeaveRecord');
+        Route::get('/applied_leave','AppliedLeaveList');
         Route::put('/apply_pay_on_previous_leave' , 'ApplyPayOnLeave');
+        Route::put('/pay_leave_approve' , 'PayLeaveApprove');
+        Route::put('/pay_leave_reject' , 'PayLeaveReject');
+        // pay_leave_reject , pay_leave_approve
     });
 
     Route::get('/edit_employee/{user}', function (User $user) {
@@ -130,4 +134,5 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::view('/emp_leave_management', 'Admin.LeaveManagement')->name('EmployeeLeaveHistory');
     Route::view('/emp_daily_attendance', 'Admin.EmployeeDailyAttendance')->name('EmployeeDailyAttendance');
     Route::view('/admin/search_emp', 'Admin.SearchEmployee')->name('AdminSearchEmployee');
+    Route::view('/pay_leave', 'Admin.PayLeave')->name('pay_leave');
 });
