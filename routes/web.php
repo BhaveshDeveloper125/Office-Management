@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminHomePageController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\EmployeeHomePageController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\RoleController;
@@ -28,6 +29,10 @@ Route::get('/', function () {
 Route::view('/forgot_password' , 'Employee.ForgotPassword')->name('forgotPassword');
 Route::view('/login_page', 'Login')->name('Login Page');
 Route::post('/login', [Usercontroller::class, 'Login'])->name('login');
+
+Route::controller(ForgotPasswordController::class)->group(function(){
+    Route::post('/reset_password' , 'CreateResetPasswordToken')->name('resetPassword');
+});
 
 Route::middleware(AuthcheckMiddleware::class)->group(function () {
 
