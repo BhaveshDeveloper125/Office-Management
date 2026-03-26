@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Attendance extends Model
 {
@@ -11,12 +12,20 @@ class Attendance extends Model
         'user_id',
         'checkin',
         'checkout',
+        'created_by'
     ];
 
     protected $casts = [
         'checkin' => 'datetime',
         'checkout' => 'datetime',
     ];
+
+    protected static function booted()
+    {
+        static::creating(function ($model) {
+            $model->created_by = Auth::id();
+        });
+    }
 
     public function user()
     {

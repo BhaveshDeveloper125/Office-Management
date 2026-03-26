@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Holiday extends Model
 {
@@ -16,6 +17,7 @@ class Holiday extends Model
         'title',
         'description',
         'days',
+        'created_by'
     ];
 
     protected static function booted()
@@ -38,6 +40,9 @@ class Holiday extends Model
         });
 
         static::creating(function ($model) {
+
+            $model->created_by = Auth::id();
+
             if (Carbon::parse($model->from) < Carbon::today() || $model->to < $model->from) {
                 throw new Exception("Can not set the past date for the Holiday", 422);
             }

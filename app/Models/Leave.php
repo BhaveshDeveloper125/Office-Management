@@ -17,7 +17,8 @@ class Leave extends Model
         'to',
         'leave_type',
         'description',
-        'approve'
+        'approve',
+        'created_by'
     ];
 
     protected $appends = ['total_days'];
@@ -38,6 +39,7 @@ class Leave extends Model
     {
         static::creating(function($modelInstance){
             $modelInstance->user_id = Auth::id();
+            $modelInstance->created_by = Auth::id();
         });
     }
 
