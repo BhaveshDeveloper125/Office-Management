@@ -88,12 +88,10 @@ class Usercontroller extends Controller
             $Validation = $request->validated();
             $user = User::find($Validation['id']);
             $user->update($Validation);
-            return redirect()->back()->with(['success' => 'User Updated Successfully']);
-        } catch (ValidationException $e) {
-            return redirect()->back()->with(['error' => $e->getMessage()]);
+            return response()->json(['success' => 'User Updated Successfully']);
         } catch (Exception $e) {
             Log::info("Error in UpdateEmp: " . $e);
-            return redirect()->back()->with(['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()],500);
         }
     }
 

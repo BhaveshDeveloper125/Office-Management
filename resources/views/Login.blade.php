@@ -392,6 +392,12 @@
                     Forgot password ?
                 </a>
 
+                @if (session()->has('error'))
+                    <div class="errors">
+                        <div class="error-item">{{ session('error') }}</div>
+                    </div>
+                @endif
+
                 <button type="submit" class="login-btn" id="loginBtn">→ Sign In</button>
 
                 @if ($errors->any())

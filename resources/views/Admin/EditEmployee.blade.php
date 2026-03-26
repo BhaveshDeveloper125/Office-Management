@@ -264,7 +264,7 @@
         <!-- header -->
         <div class="header-area">
             <div class="header-left">
-                <a class="back-btn" href="#">← Back</a>
+                {{-- <a class="back-btn" href="#">← Back</a> --}}
                 <div class="page-title">Edit <span>Employee</span></div>
                 <div class="emp-pill">{{ $user->name }}</div>
             </div>
@@ -336,7 +336,7 @@
                             </div>
                             <div class="field">
                                 <label class="field-label" for="joining">Joining Date</label>
-                                <input class="field-input" type="date" name="joining" id="joining" value="{{ $user->joining }}">
+                                <input class="field-input" type="date" name="joining" id="joining" value="{{ Carbon\Carbon::parse($user->joining)->format('Y-m-d') }}">
                             </div>
                         </div>
                     </div>
@@ -349,11 +349,11 @@
                         <div class="form-grid-2">
                             <div class="field">
                                 <label class="field-label" for="working_from">Shift Start</label>
-                                <input class="field-input" type="time" name="working_from" id="working_from" value="{{ $user->working_from }}">
+                                <input class="field-input" type="time" name="working_from" id="working_from" value="{{ Carbon\Carbon::parse($user->working_from)->format('H:i:s') }}">
                             </div>
                             <div class="field">
                                 <label class="field-label" for="working_to">Shift End</label>
-                                <input class="field-input" type="time" name="working_to" id="working_to" value="{{ $user->working_to }}">
+                                <input class="field-input" type="time" name="working_to" id="working_to" value="{{ Carbon\Carbon::parse($user->working_to)->format('H:i:s') }}">
                             </div>
                         </div>
 
@@ -380,7 +380,7 @@
                 <div class="actions-inner">
                     <span class="action-hint">💾 Save changes or permanently delete this employee.</span>
                     <div style="display:flex;gap:1rem;flex-wrap:wrap">
-                        <button type="button" class="btn-save" id="saveBtn" onclick="document.getElementById('edit_form').submit()">✓ Save Changes</button>
+                        <button type="button" class="btn-save" id="saveBtn">✓ Save Changes</button>
 
                         <form action="/delete_employee" method="post" id="deleteForm"
                               onsubmit="return confirm('Are you sure you want to permanently delete this employee?')">
@@ -419,7 +419,7 @@
     setTheme(localStorage.getItem('theme') || 'light', false);
 
     /* ── MOUSE GLOW ── */
-    ['card1','card2','card3','actionsCard'].forEach(id => {
+    ['card1', 'card2', 'card3', 'actionsCard'].forEach(id => {
         const el = document.getElementById(id);
         if (!el) return;
         el.addEventListener('mousemove', e => {
@@ -429,14 +429,51 @@
         });
     });
 
-    /* ── BUTTON CLICK FEEDBACK ── */
-    ['saveBtn','deleteBtn'].forEach(id => {
-        const btn = document.getElementById(id);
-        if (!btn) return;
-        btn.addEventListener('click', () => {
-            btn.style.transform = 'scale(0.96)';
-            setTimeout(() => btn.style.transform = '', 200);
+    /* ── DELETE BUTTON CLICK FEEDBACK ── */
+    const deleteBtn = document.getElementById('deleteBtn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => {
+            deleteBtn.style.transform = 'scale(0.96)';
+            setTimeout(() => deleteBtn.style.transform = '', 200);
         });
+    }
+
+    /* ── SAVE FORM VIA AJAX ── */
+    const saveBtn = document.getElementById('saveBtn');
+
+    saveBtn.addEventListener('click', async () => {
+        const form     = document.getElementById('edit_form');
+        const formData = new FormData(form);
+
+        saveBtn.style.transform = 'scale(0.96)';
+        setTimeout(() => saveBtn.style.transform = '', 200);
+        saveBtn.disabled    = true;
+        saveBtn.textContent = 'Saving…';
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept':       'application/json',
+                },
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                toastr.success(data.success);
+            } else {
+                toastr.error(data.error ?? 'Something went wrong.');
+            }
+
+        } catch (err) {
+            toastr.error('Network error. Please try again.');
+        } finally {
+            saveBtn.disabled    = false;
+            saveBtn.textContent = '✓ Save Changes';
+        }
     });
 
     /* ── EMPLOYMENT STATUS TOGGLE ── */

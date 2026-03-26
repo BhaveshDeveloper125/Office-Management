@@ -52,7 +52,7 @@ class UserValidationRequest extends FormRequest
                 'working_from' => 'sometimes|date_format:H:i:s',
                 'working_to' => 'sometimes|date_format:H:i:s',
                 'role' => 'sometimes|exists:roles,name',
-                'hours' => 'required|numeric|min:0|max:24',
+                'hours' => 'sometimes|numeric|min:0|max:24',
             ];
         } elseif ($this->isMethod('put') && $this->is('update_user')) {
             return [
