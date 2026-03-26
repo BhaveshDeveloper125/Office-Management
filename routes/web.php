@@ -12,6 +12,7 @@ use App\Http\Controllers\UserLeaveController;
 use App\Http\Controllers\WeeklyHolidayController;
 use App\Http\Middleware\AuthcheckMiddleware;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,11 @@ Route::post('/login', [Usercontroller::class, 'Login'])->name('login');
 
 Route::controller(ForgotPasswordController::class)->group(function(){
     Route::post('/reset_password' , 'CreateResetPasswordToken')->name('resetPassword');
+    Route::post('/resetPassword', 'ResetPassword')->name('reset.password');
+});
+
+Route::get('/reset_password/{token}', function($token , Request $request){
+    return view('ResetPasswordForm' , ['token' => $token , 'email' => $request->query('email')]);
 });
 
 Route::middleware(AuthcheckMiddleware::class)->group(function () {
