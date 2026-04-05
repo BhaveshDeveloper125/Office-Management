@@ -7,10 +7,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Employee Dashboard</title>
     <x-link />
-     <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
  
     <style>
             *,
@@ -475,7 +475,7 @@
 
         <!-- HEADER -->
         <header class="header">
-            <div class="header-title">Employee Dashboard</div>
+            <div class="header-title">Hello, <span style="color: #FF4C60;">{{ Auth::user()->name }}</span></div>
             <div class="header-right">
                 <div class="theme-toggle">
                     <button class="toggle-pill active" id="lightBtn" onclick="setTheme('light')">☀️ Light</button>

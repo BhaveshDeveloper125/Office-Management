@@ -22,7 +22,7 @@ class InitialData extends Seeder
 
         $user = User::create([
             'name' => 'Admin',
-            'email' => 'admin@mail.com',
+            'email' => 'adityadabhi04@gmail.com',
             'post' => 'Admin',
             'mobile' => '9773400215',
             'qualification' => 'Admin',

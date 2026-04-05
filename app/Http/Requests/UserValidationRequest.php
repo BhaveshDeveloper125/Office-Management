@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class UserValidationRequest extends FormRequest
 {
@@ -57,11 +59,10 @@ class UserValidationRequest extends FormRequest
         } elseif ($this->isMethod('put') && $this->is('update_user')) {
             return [
                 // For Employee
-                'photo' => 'sometimes|image',
                 'name' => 'sometimes|string|max:255',
-                'email' => 'sometimes|string|email|max:255|exists:users,email',
+                'email' => ['sometimes', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore(Auth::id())],
                 'post' => 'sometimes|string|max:255',
-                'mobile' => 'required|numeric|digits:10|unique:users,mobile,' . $this->id,
+                'mobile' => ['required', 'numeric', 'digits:10', Rule::unique('users', 'mobile')->ignore(Auth::id())],
                 'qualification' => 'sometimes|string|max:255',
                 'experience' => 'sometimes|numeric',
                 'address' => 'sometimes|string|max:255',

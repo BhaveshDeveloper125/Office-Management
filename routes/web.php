@@ -134,7 +134,7 @@ Route::middleware(AuthcheckMiddleware::class)->group(function () {
     Route::view('/emp_attendance', 'Employee.EmployeeAttendance')->name('EmployeeAttendance');
     Route::view('/emp/profile', 'Employee.Profile');
     Route::view('/emp_leave', 'Employee.AskLeave');
-    Route::view('/profile' , '');
+    Route::view('/profile' , 'Employee.Profile');
     
     Route::view('/emp_attendance_data', 'Employee.EmployeeAttendanceData')->name('EmployeeAttendanceData');
     Route::view('/emp_late_data', 'Employee.Late')->name('EmployeeLateData');
