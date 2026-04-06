@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -16,12 +17,14 @@ return new class extends Migration
             $table->string('mobile')->unique()->after('post');
             $table->string('address')->after('mobile');
             $table->string('qualification')->after('address');
-            $table->decimal('experience', 5, 2)->after('qualification');
+            $table->decimal('experience', 5, 2)->after('qualification')->unsigned()->default(0.00);
             $table->date('joining')->after('experience');
             $table->time('working_from')->after('joining');
             $table->time('working_to')->after('working_from');
             $table->boolean('working')->default(true)->after('working_to');
         });
+
+        DB::statement('ALTER TABLE users ADD CONSTRAINT exp_limit CHECK ((experience - FLOOR(experience)) <= 0.11)');
     }
 
     /**

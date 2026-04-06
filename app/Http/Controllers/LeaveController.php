@@ -60,6 +60,12 @@ class LeaveController extends Controller
             ]);
 
             $leave = Leave::find($validated['id']);
+
+            if ($leave->to < Carbon::today()) {
+                $leave->update(['status' => false]);    
+                return response()->json(['error' => 'Cannot approve or reject past leaves and it considers them as rejected.'], 422);
+            }
+
             unset($validated['id']);
             $leave->update($validated);
 
@@ -97,7 +103,7 @@ class LeaveController extends Controller
                 $leaveApproved['prev'] = $leaveApproved['prev_page_url'] ? $leaveApproved['current_page'] - 1 : null;
                 return response()->json(['approved' => $leaveApproved]);
             }else if ($request->is('admin/leaves/rejected')) {
-                $leaveRejection = Leave::where('approve', config('LeavesVars.leave_approval.rejected'))->with('user')->paginate(20);
+                $leaveRejection = Leave::where('approve', config('LeavesVars.leave_approval.Rejected'))->with('user')->paginate(20);
                 $leaveRejected = $leaveRejection->toArray();
                 $leaveRejected['next'] = $leaveRejected['next_page_url'] ? $leaveRejected['current_page'] + 1 : null;
                 $leaveRejected['prev'] = $leaveRejected['prev_page_url'] ? $leaveRejected['current_page'] - 1 : null;

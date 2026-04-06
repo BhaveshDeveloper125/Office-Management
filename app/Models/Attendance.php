@@ -25,6 +25,14 @@ class Attendance extends Model
         static::creating(function ($model) {
             $model->created_by = Auth::id();
         });
+
+        static::creating(function ($model) {
+            $model->user_id = Auth::id();
+        });
+
+        static::updating(function ($model) {
+            $model->user_id = Auth::id();
+        });
     }
 
     public function user()
