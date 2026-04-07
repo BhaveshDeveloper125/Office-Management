@@ -317,7 +317,6 @@
 
 <script>
     /* ── TOASTR ── */
-    toastr.options = { closeButton: true, progressBar: true, positionClass: 'toast-bottom-right' };
 
     /* ── THEME ── */
     const lightBtn = document.querySelector('[data-theme="light"]');

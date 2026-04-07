@@ -387,7 +387,6 @@
 
 <script>
     /* ── TOASTR ── */
-    toastr.options = { closeButton: true, progressBar: true, positionClass: "toast-bottom-right" };
 
     /* ── THEME ── */
     const body = document.body;

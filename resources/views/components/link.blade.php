@@ -19,12 +19,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <script>
-    // Toastr default settings
+    // ── Toastr Global Config ──
+    // timeOut: 0          → never auto-dismiss
+    // tapToDismiss: true  → clicking the toast body will close it
     toastr.options = {
-        closeButton: true,
-        progressBar: true,
-        positionClass: 'toast-bottom-right',
-        timeOut: 900
+        closeButton:    true,
+        progressBar:    false,
+        positionClass:  'toast-bottom-right',
+        timeOut:        0,
+        extendedTimeOut: 0,
+        tapToDismiss:   true
     };
 </script>
 
